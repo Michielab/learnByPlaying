@@ -1,4 +1,5 @@
-import React from "react";
+import React from 'react';
+import PropTypes from 'prop-types';
 
 const Note = props => {
   return (
@@ -7,12 +8,12 @@ const Note = props => {
         cx={props.cx}
         cy={props.cy}
         rx="15"
-        ry="7"
+        ry="10"
         stroke="black"
         fill="transparent"
         strokeWidth="3"
       />
-      {props.line === true ? (
+      {props.line === true && (
         <line
           x1={props.cx - 20}
           y1={props.cy}
@@ -21,11 +22,15 @@ const Note = props => {
           strokeWidth="3"
           stroke="black"
         />
-      ) : (
-        ""
       )}
     </svg>
   );
+};
+
+Note.propTypes = {
+  cx: PropTypes.number,
+  cy: PropTypes.number,
+  line: PropTypes.bool
 };
 
 export default Note;
