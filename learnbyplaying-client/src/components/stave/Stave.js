@@ -5,6 +5,8 @@ import Gsleutel from '~/Gsleutel.jpg';
 import ButtonBar from '~/components/buttons/ButtonBar';
 import Button from '@material-ui/core/Button';
 import { withStyles, createStyles } from '@material-ui/core';
+import G from "../../sounds/fKey/Gsleutel.m4a";
+import Sound from "react-sound";
 
 const styles = theme =>
   createStyles({
@@ -37,20 +39,28 @@ class Stave extends Component {
   componentDidMount() {
     this.update();
     window.addEventListener('resize', this.update);
+    this.startGame(this.notes);
   }
 
   componentWillUnmount() {
     window.removeEventListener('resize', this.update);
   }
 
+  componentDidUpdate(prevProps, prevState) {
+    if (this.state.gameStarted !== prevState.gameStarted) {
+      this.startGame(this.notes);
+    }
+  }
+
   nextNote = notes => {
     let number = Math.floor(Math.random() * notes.length);
+    number = 4
     let note = notes[number];
     this.setState({ note });
   };
 
   startGame = notes => {
-    this.nextNote(notes);
+    this.setState({ gameStarted: true }, this.nextNote(notes));
   };
 
   check = answer => {
@@ -78,7 +88,6 @@ class Stave extends Component {
     const middle = height / 2;
     let divider, end;
     let x = (width - 160) / 14;
-    let startPointX = 160;
     width > 800 ? (end = 800 - 50) : (end = width - 50);
     height < 125 ? (divider = 15) : (divider = 25);
     const vertices = [
@@ -91,6 +100,8 @@ class Stave extends Component {
 
     const { note } = this.state;
     const { classes } = this.props;
+
+    let startPointX = 160;
     const notes = [
       {
         name: 'C',
@@ -116,7 +127,8 @@ class Stave extends Component {
       {
         name: 'G',
         positionX: startPointX + x * 4,
-        positionY: middle + (divider / 2) * 2
+        positionY: middle + (divider / 2) * 2,
+        sound: G
       },
       {
         name: 'A',
@@ -158,6 +170,7 @@ class Stave extends Component {
     ];
 
     this.notes = notes;
+
     return (
       <div className={classes.staveContainer} ref={this.containerRef}>
         <svg className={classes.stave}>
@@ -175,7 +188,8 @@ class Stave extends Component {
           )}
         </svg>
         <ButtonBar notes={notes} check={this.check} />
-        <Button onClick={() => this.startGame(notes)}>Start</Button>
+        <Sound url={this.state.note.sound} playStatus='PLAYING' />
+
       </div>
     );
   }

@@ -4,6 +4,7 @@ import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
 import PropTypes from 'prop-types';
+import { Link } from "react-router-dom";
 
 const styles = theme =>
   createStyles({
@@ -37,6 +38,8 @@ class Nav extends Component {
         >
           <MenuIcon />
         </IconButton>
+        <Link to="/">Home</Link>
+        <Link to="/learning">Learning</Link>
         <div className={classes.text}>Learning</div>
         <Button classes={{ root: classes.button }}>Login </Button>
       </Paper>

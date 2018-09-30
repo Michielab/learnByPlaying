@@ -6,12 +6,13 @@ import registerServiceWorker from './registerServiceWorker';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
 import rootReducer from './ducks/ruducers/reducers';
+import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
 
-const store = createStore(rootReducer)
+const store = createStore(rootReducer);
 
 ReactDOM.render(
   <Provider store={store}>
-    <App />
+      <App />
   </Provider>,
   document.getElementById('root')
 );
