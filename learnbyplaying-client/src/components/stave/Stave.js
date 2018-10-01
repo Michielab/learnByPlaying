@@ -16,10 +16,11 @@ const styles = theme =>
       width: '50%',
       minWidth: '400px',
       minHeight: ' 200px',
+      maxWidth: '720px',
       webkitBoxShadow: '4px 7px 10px 3px rgba(0,0,0,0.75)',
       mozBoxShadow: '4px 7px 10px 3px rgba(0,0,0,0.75)',
       boxShadow: '4px 7px 10px 3px rgba(0,0,0,0.75)',
-      borderRadius: '5px'
+      borderRadius: '5px',
     },
     stave: {
       width: '100%',
@@ -94,7 +95,7 @@ class Stave extends Component {
       [[50, middle + divider * 2], [end, middle + divider * 2]]
     ];
     this.notes = getNotes(middle, divider, width, gameOptions.type);
-
+    console.log(this.notes)
     return (
       <div className={classes.staveContainer} ref={this.containerRef}>
         <svg className={classes.stave}>

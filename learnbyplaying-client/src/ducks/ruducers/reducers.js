@@ -7,7 +7,7 @@ const defaultState = {
   score: 0,
   gameOptions: {
     type: 'fKeySimple',
-    started: false
+    started: true
   }
 };
 
