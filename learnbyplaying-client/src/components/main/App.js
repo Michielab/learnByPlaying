@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import '~/App.css';
 import Nav from '~/components/header/Nav';
 import Stave from '~/components/stave/Stave';
+import GameOptions from '~/components/game/GameOptions';
+
 import { withStyles, createStyles } from '@material-ui/core';
 import Paper from '@material-ui/core/Paper';
 import { connect } from 'react-redux';
@@ -42,6 +44,7 @@ class App extends Component {
         <Paper className={classes.root} elevation={0} square={true}>
           <Nav />
           <Route exact path="/" component={() => <div>home</div>} />
+          <Route path="/learn" component={GameOptions} />
           <Route
             path="/learning"
             component={() => (
@@ -55,7 +58,7 @@ class App extends Component {
                 >
                   Score: {session.score}
                 </div>
-                <Stave addPoints={addPoints} deductPoints={deductPoints} />
+                <Stave addPoints={addPoints} deductPoints={deductPoints} gameOptions={session.gameOptions}/>
               </Paper>
             )}
           />
