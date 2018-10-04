@@ -20,7 +20,7 @@ const styles = theme =>
       webkitBoxShadow: '4px 7px 10px 3px rgba(0,0,0,0.75)',
       mozBoxShadow: '4px 7px 10px 3px rgba(0,0,0,0.75)',
       boxShadow: '4px 7px 10px 3px rgba(0,0,0,0.75)',
-      borderRadius: '5px',
+      borderRadius: '5px'
     },
     stave: {
       width: '100%',
@@ -34,11 +34,16 @@ class Stave extends Component {
   notes;
   constructor(props) {
     super(props);
-    this.state = { note: '', width: '', height: '' };
+    this.state = {
+      width: '',
+      height: '',
+      number: 0
+    };
   }
 
   componentDidMount() {
     this.update();
+    this.nextNote(this.notes);
     window.addEventListener('resize', this.update);
   }
 
@@ -46,21 +51,17 @@ class Stave extends Component {
     window.removeEventListener('resize', this.update);
   }
 
-  componentDidUpdate(prevProps, prevState) {
-    if (this.props.gameStarted !== prevProps.gameStarted) {
-      this.startGame(this.notes);
-    }
+  componentDidUpdate(prevProps) {
+    console.log(prevProps, this.props);
   }
 
   nextNote = notes => {
     let number = Math.floor(Math.random() * notes.length);
-    number = 4;
-    let note = notes[number];
-    this.setState({ note });
+    this.setState({ number });
   };
 
   check = answer => {
-    let currentNote = this.state.note.name;
+    let currentNote = this.notes[this.state.number].name;
     answer === currentNote
       ? (this.props.addPoints(), this.nextNote(this.notes))
       : this.props.deductPoints();
@@ -80,7 +81,7 @@ class Stave extends Component {
   };
 
   render() {
-    const { width, height, note } = this.state;
+    const { width, height, number } = this.state;
     const { classes, gameOptions } = this.props;
 
     const middle = height / 2;
@@ -95,7 +96,8 @@ class Stave extends Component {
       [[50, middle + divider * 2], [end, middle + divider * 2]]
     ];
     this.notes = getNotes(middle, divider, width, gameOptions.type);
-    console.log(this.notes)
+    let note = this.notes[number];
+
     return (
       <div className={classes.staveContainer} ref={this.containerRef}>
         <svg className={classes.stave}>
@@ -108,12 +110,12 @@ class Stave extends Component {
           {vertices.map((vertice, index) => (
             <NoteLine key={index} vertices={vertice} />
           ))}
-          {note !== '' && (
+          {note && (
             <Note cx={note.positionX} cy={note.positionY} line={note.line} />
           )}
         </svg>
         <ButtonBar notes={this.notes} check={this.check} />
-        <Sound url={this.state.note.sound} playStatus="PLAYING" />
+        <Sound url={note.sound} playStatus="PLAYING" />
       </div>
     );
   }

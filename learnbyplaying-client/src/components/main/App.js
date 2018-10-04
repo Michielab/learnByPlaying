@@ -3,12 +3,12 @@ import '~/App.css';
 import Nav from '~/components/header/Nav';
 import Stave from '~/components/stave/Stave';
 import GameOptions from '~/components/game/GameOptions';
-
+import Button from '@material-ui/core/Button'
 import { withStyles, createStyles } from '@material-ui/core';
 import Paper from '@material-ui/core/Paper';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { addPoints, deductPoints } from '~/ducks/actions/actions';
+import { addPoints, deductPoints, setGameOptions } from '~/ducks/actions/actions';
 import { BrowserRouter as Router, Route } from 'react-router-dom';
 
 const mapStateToProps = state => {
@@ -18,7 +18,7 @@ const mapStateToProps = state => {
 };
 
 const mapDispatchToProps = dispatch => {
-  return bindActionCreators({ addPoints, deductPoints }, dispatch);
+  return bindActionCreators({ addPoints, deductPoints, setGameOptions }, dispatch);
 };
 
 const styles = theme =>
@@ -38,7 +38,7 @@ const styles = theme =>
 
 class App extends Component {
   render() {
-    const { classes, session, addPoints, deductPoints } = this.props;
+    const { classes, session, addPoints, deductPoints, setGameOptions } = this.props;
     return (
       <Router>
         <Paper className={classes.root} elevation={0} square={true}>
@@ -57,6 +57,7 @@ class App extends Component {
                   }}
                 >
                   Score: {session.score}
+                <Button onClick={()=>setGameOptions({type: 'fKeySimple', started: true})}>Start</Button>
                 </div>
                 <Stave addPoints={addPoints} deductPoints={deductPoints} gameOptions={session.gameOptions}/>
               </Paper>
