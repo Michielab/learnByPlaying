@@ -3,15 +3,16 @@ export const DEDUCT_POINTS = 'DEDUCT_POINTS';
 export const SET_GAMEOPTIONS = 'SET_GAMEOPTIONS';
 
 export const addPoints = () => ({
-    type: 'ADD_POINTS'
-  });
-  
-export const deductPoints = () => ({
-    type: 'DEDUCT_POINTS'
-  });
+  type: 'ADD_POINTS'
+});
 
-export const setGameOptions = options => ({
-    type: 'SET_GAMEOPTIONS',
-    value: options
-  });
-  
+export const deductPoints = () => ({
+  type: 'DEDUCT_POINTS'
+});
+
+export const setGameOptions = gameOptions => ({
+  type: 'SET_GAMEOPTIONS',
+  payload: {
+    gameOptions
+  }
+});

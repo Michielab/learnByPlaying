@@ -13,7 +13,8 @@ import { BrowserRouter as Router, Route } from 'react-router-dom';
 
 const mapStateToProps = state => {
   return {
-    ...state
+    // ...state
+    session: state.session
   };
 };
 
@@ -37,14 +38,19 @@ const styles = theme =>
   });
 
 class App extends Component {
+
+  componentDidUpdate(prevProps) {
+    console.log(prevProps, this.props);
+  }
   render() {
+    console.log('render')
     const { classes, session, addPoints, deductPoints, setGameOptions } = this.props;
     return (
       <Router>
         <Paper className={classes.root} elevation={0} square={true}>
           <Nav />
           <Route exact path="/" component={() => <div>home</div>} />
-          <Route path="/learn" component={GameOptions} />
+          <Route exact path="/learn" component={GameOptions} />
           <Route
             path="/learning"
             component={() => (
@@ -56,10 +62,11 @@ class App extends Component {
                     marginTop: '100px'
                   }}
                 >
-                  Score: {session.score}
-                <Button onClick={()=>setGameOptions({type: 'fKeySimple', started: true})}>Start</Button>
+                  {/* Score: {session.score} */}
                 </div>
-                <Stave addPoints={addPoints} deductPoints={deductPoints} gameOptions={session.gameOptions}/>
+                {/* <Stave score={session.score} addPoints={addPoints} deductPoints={deductPoints} gameOptions={session.gameOptions}/> */}
+                <Stave />
+
               </Paper>
             )}
           />
@@ -69,9 +76,11 @@ class App extends Component {
   }
 }
 
-export default withStyles(styles)(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps
-  )(App)
-);
+export default withStyles(styles)(App)
+
+// export default withStyles(styles)(
+//   connect(
+//     mapStateToProps,
+//     mapDispatchToProps
+//   )(App)
+// );

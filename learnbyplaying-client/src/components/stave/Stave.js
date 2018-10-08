@@ -3,10 +3,29 @@ import NoteLine from '~/components/notes/NoteLine';
 import Note from '~/components/notes/Note';
 import Gsleutel from '~/Gsleutel.jpg';
 import ButtonBar from '~/components/buttons/ButtonBar';
-import Button from '@material-ui/core/Button';
 import { withStyles, createStyles } from '@material-ui/core';
 import Sound from 'react-sound';
 import { getNotes } from '~/components/notes/Notes';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import {
+  addPoints,
+  deductPoints,
+  setGameOptions
+} from '~/ducks/actions/actions';
+
+const mapStateToProps = state => {
+  return {
+    session: state.session
+  };
+};
+
+const mapDispatchToProps = dispatch => {
+  return bindActionCreators(
+    { addPoints, deductPoints, setGameOptions },
+    dispatch
+  );
+};
 
 const styles = theme =>
   createStyles({
@@ -16,7 +35,7 @@ const styles = theme =>
       width: '50%',
       minWidth: '400px',
       minHeight: ' 200px',
-      maxWidth: '720px',
+      maxWidth: '650px',
       webkitBoxShadow: '4px 7px 10px 3px rgba(0,0,0,0.75)',
       mozBoxShadow: '4px 7px 10px 3px rgba(0,0,0,0.75)',
       boxShadow: '4px 7px 10px 3px rgba(0,0,0,0.75)',
@@ -37,22 +56,30 @@ class Stave extends Component {
     this.state = {
       width: '',
       height: '',
-      number: 0
+      number: '',
+      note: ''
     };
   }
 
   componentDidMount() {
     this.update();
-    this.nextNote(this.notes);
     window.addEventListener('resize', this.update);
+    if (this.props.session.gameOptions.started) {
+      this.nextNote(this.notes);
+    }
   }
 
   componentWillUnmount() {
     window.removeEventListener('resize', this.update);
   }
 
-  componentDidUpdate(prevProps) {
-    console.log(prevProps, this.props);
+  componentDidUpdate(prevProps, prevState) {
+    if (
+      prevProps.session.gameOptions.started !==
+      this.props.session.gameOptions.started
+    ) {
+      this.nextNote(this.notes);
+    }
   }
 
   nextNote = notes => {
@@ -82,7 +109,13 @@ class Stave extends Component {
 
   render() {
     const { width, height, number } = this.state;
-    const { classes, gameOptions } = this.props;
+    const {
+      classes,
+      gameOptions,
+      session,
+      setGameOptions,
+      deductPoints
+    } = this.props;
 
     const middle = height / 2;
     let divider, end;
@@ -95,7 +128,7 @@ class Stave extends Component {
       [[50, middle + divider], [end, middle + divider]],
       [[50, middle + divider * 2], [end, middle + divider * 2]]
     ];
-    this.notes = getNotes(middle, divider, width, gameOptions.type);
+    this.notes = getNotes(middle, divider, width, session.gameOptions.type);
     let note = this.notes[number];
 
     return (
@@ -111,14 +144,21 @@ class Stave extends Component {
             <NoteLine key={index} vertices={vertice} />
           ))}
           {note && (
-            <Note cx={note.positionX} cy={note.positionY} line={note.line} />
+            <React.Fragment>
+              <Note cx={note.positionX} cy={note.positionY} line={note.line} />
+              <Sound url={note.sound} playStatus="PLAYING" />
+            </React.Fragment>
           )}
         </svg>
         <ButtonBar notes={this.notes} check={this.check} />
-        <Sound url={note.sound} playStatus="PLAYING" />
       </div>
     );
   }
 }
 
-export default withStyles(styles)(Stave);
+export default withStyles(styles)(
+  connect(
+    mapStateToProps,
+    mapDispatchToProps
+  )(Stave)
+);

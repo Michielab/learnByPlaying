@@ -26,7 +26,7 @@ const session = (state = defaultState, action) => {
     case 'SET_GAMEOPTIONS':
       return {
         ...state,
-        gameOptions: { ...action.value }
+        gameOptions: { ...action.payload.gameOptions }
       };
     default:
       return state;

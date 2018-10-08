@@ -5,12 +5,39 @@ import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import Switch from '@material-ui/core/Switch';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { setGameOptions } from '~/ducks/actions/actions';
+import Paper from '@material-ui/core/Paper';
+import { withStyles, createStyles } from '@material-ui/core';
+import Button from '@material-ui/core/Button';
+import { Link } from "react-router-dom";
+
+const mapStateToProps = state => {
+  return {
+    session: state.session
+  };
+};
+
+const mapDispatchToProps = dispatch => {
+  return bindActionCreators({ setGameOptions }, dispatch);
+};
+
+const styles = theme =>
+  createStyles({
+    conainer: {
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'center',
+      alignItems: 'center',
+      height: '100%'
+    }
+  });
 
 class SwitchesGroup extends React.Component {
   state = {
-    gilad: true,
-    jason: false,
-    antoine: true,
+    sharpsAndFlats: false,
+    notesOutside: false,
   };
 
   handleChange = name => event => {
@@ -18,45 +45,51 @@ class SwitchesGroup extends React.Component {
   };
 
   render() {
+    const { classes, setGameOptions } = this.props;
     return (
-      <FormControl component="fieldset">
-        <FormLabel component="legend">Assign responsibility</FormLabel>
-        <FormGroup>
-          <FormControlLabel
-            control={
-              <Switch
-                checked={this.state.gilad}
-                onChange={this.handleChange('gilad')}
-                value="gilad"
-              />
-            }
-            label="Gilad Gray"
-          />
-          <FormControlLabel
-            control={
-              <Switch
-                checked={this.state.jason}
-                onChange={this.handleChange('jason')}
-                value="jason"
-              />
-            }
-            label="Jason Killian"
-          />
-          <FormControlLabel
-            control={
-              <Switch
-                checked={this.state.antoine}
-                onChange={this.handleChange('antoine')}
-                value="antoine"
-              />
-            }
-            label="Antoine Llorca"
-          />
-        </FormGroup>
-        <FormHelperText>Be careful</FormHelperText>
-      </FormControl>
+      <Paper className={classes.conainer}>
+        <FormControl component="fieldset">
+          <FormLabel component="legend">Choose your game</FormLabel>
+          <FormGroup>
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={this.state.sharpsAndFlats}
+                  onChange={this.handleChange('sharpsAndFlats')}
+                  value="sharps"
+                />
+              }
+              label="With sharps and flats"
+            />
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={this.state.notesOutside}
+                  onChange={this.handleChange('notesOutside')}
+                  value="notesOutside"
+                />
+              }
+              label="Only notes on the stave"
+            />
+          </FormGroup>
+          <Link to="/learning">
+            <Button
+              onClick={() =>
+                setGameOptions({ type: 'fKeySimple', started: true, ...this.state })
+              }
+            >
+              Start
+            </Button>
+          </Link>
+        </FormControl>
+      </Paper>
     );
   }
 }
 
-export default SwitchesGroup;
+export default withStyles(styles)(
+  connect(
+    mapStateToProps,
+    mapDispatchToProps
+  )(SwitchesGroup)
+);
