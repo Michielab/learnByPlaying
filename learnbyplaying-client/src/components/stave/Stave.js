@@ -36,6 +36,7 @@ const styles = theme =>
       minWidth: '400px',
       minHeight: ' 200px',
       maxWidth: '650px',
+      maxHeight: '400px',
       webkitBoxShadow: '4px 7px 10px 3px rgba(0,0,0,0.75)',
       mozBoxShadow: '4px 7px 10px 3px rgba(0,0,0,0.75)',
       boxShadow: '4px 7px 10px 3px rgba(0,0,0,0.75)',

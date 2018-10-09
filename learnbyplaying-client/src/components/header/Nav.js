@@ -38,7 +38,7 @@ class Nav extends Component {
         >
           <MenuIcon />
         </IconButton>
-        <Link to="/">Home</Link>
+        <Link to="/learn">Home</Link>
         <Link to="/learning">Learning</Link>
         <div className={classes.text}>Learning</div>
         <Button classes={{ root: classes.button }}>Login </Button>
