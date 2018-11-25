@@ -31,13 +31,13 @@ const styles = theme =>
       justifyContent: 'center',
       alignItems: 'center',
       height: '100%',
-      backgroundColor: '#333333'
+      backgroundColor: '#535353'
     },
     formControl: {
       display: 'flex'
     },
     form: {
-      backgroundColor: '#333333',
+      backgroundColor: '#212121',
       height: '40%',
       width: '40%',
       maxWidth: '650px',
@@ -54,15 +54,28 @@ const styles = theme =>
     labelTitle: {
       textAlign: 'center',
       marginBottom: '20px',
-      color: 'floralwhite'
+      color: 'floralwhite',
+      "& :focus": {
+        color: 'red'
+      }
+    },
+    activeTitle: {
+      color: 'floralwhite !important'
+    },
+    activeSwitch: {
+      color: '#F9D03B !important'
+    },
+    activeSwitchBar: {
+      backgroundColor: '#F9D03B !important'
     },
     start: {
-      color: '#81ECD9'
+      backgroundColor: '#2FD566',
+      color: '#FFFFFF'
     },
     link: {
       textAlign: 'center',
       textDecoration: 'none',
-      marginTop: '10px'
+      marginTop: '20px'
     }
   });
 
@@ -82,13 +95,13 @@ class SwitchesGroup extends React.Component {
       <Paper className={classes.conainer} square={true}>
         <Paper className={classes.form}>
           <FormControl component="fieldset" classes={{root: classes.formControl}}>
-            <FormLabel component="legend"  classes={{root: classes.labelTitle}}>Choose your game</FormLabel>
+            <FormLabel component="legend"  classes={{root: classes.labelTitle, focused: classes.activeTitle}}>Choose your game</FormLabel>
             <FormGroup  >
               <FormControlLabel
                classes={{label: classes.label}}
                 control={
                   <Switch
-                 
+                  classes={{checked: classes.activeSwitch, bar: classes.activeSwitchBar}}
                     checked={this.state.sharpsAndFlats}
                     onChange={this.handleChange('sharpsAndFlats')}
                     value="sharps"
@@ -100,6 +113,7 @@ class SwitchesGroup extends React.Component {
                classes={{label: classes.label}}
                 control={
                   <Switch
+                    classes={{checked: classes.activeSwitch, bar: classes.activeSwitchBar}}
                     checked={this.state.notesOutside}
                     onChange={this.handleChange('notesOutside')}
                     value="notesOutside"

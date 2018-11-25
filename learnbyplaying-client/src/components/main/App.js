@@ -1,27 +1,30 @@
 import React, { Component } from 'react';
-import '~/App.css';
-import Nav from '~/components/header/Nav';
-import Stave from '~/components/stave/Stave';
-import GameOptions from '~/components/game/GameOptions';
-import Button from '@material-ui/core/Button'
-import { withStyles, createStyles } from '@material-ui/core';
-import Paper from '@material-ui/core/Paper';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import { addPoints, deductPoints, setGameOptions } from '~/ducks/actions/actions';
 import { BrowserRouter as Router, Route } from 'react-router-dom';
 
-const mapStateToProps = state => {
-  return {
-    // ...state
-    session: state.session
-  };
-};
+/* Import components */
+import Nav from '~/components/header/Nav';
+import Stave from '~/components/stave/Stave2';
+import GameOptions from '~/components/game/GameOptions';
+import Learn from '~/components/learn/Learn';
+import ButtonBar from '~/components/buttons/ButtonBar';
+import Score from '~/components/score/Score';
+/* Import MaterialUI components */
+import { withStyles, createStyles } from '@material-ui/core';
+import Paper from '@material-ui/core/Paper';
 
-const mapDispatchToProps = dispatch => {
-  return bindActionCreators({ addPoints, deductPoints, setGameOptions }, dispatch);
-};
+/* Import CSS */
+import '~/App.css';
 
+/*  
+LightGrey: #B3B3B3
+DarkGrey: #535353
+Black: #121212
+LightBlack: #212121
+Green: #2AB859
+LightGreen: #2FD566;
+White: #FFFFFF
+
+*/
 const styles = theme =>
   createStyles({
     root: {
@@ -29,7 +32,9 @@ const styles = theme =>
       height: '100vh'
     },
     container: {
-      backgroundColor: '#333333',
+      // backgroundColor: '#333333',
+
+      backgroundColor: '#535353',
       height: '100%',
       display: 'flex',
       flexDirection: 'column',
@@ -38,13 +43,8 @@ const styles = theme =>
   });
 
 class App extends Component {
-
-  componentDidUpdate(prevProps) {
-    console.log(prevProps, this.props);
-  }
   render() {
-    console.log('render')
-    const { classes, session, addPoints, deductPoints, setGameOptions } = this.props;
+    const { classes } = this.props;
     return (
       <Router>
         <Paper className={classes.root} elevation={0} square={true}>
@@ -55,18 +55,22 @@ class App extends Component {
             path="/learning"
             component={() => (
               <Paper className={classes.container} elevation={0} square={true}>
-                <div
-                  style={{
-                    color: 'white',
-                    height: '100px',
-                    marginTop: '100px'
-                  }}
-                >
-                  {/* Score: {session.score} */}
-                </div>
-                {/* <Stave score={session.score} addPoints={addPoints} deductPoints={deductPoints} gameOptions={session.gameOptions}/> */}
-                <Stave />
-
+                <Stave>
+                  {({ ...props, session }) => (
+                    <Learn {...props}>
+                      {({ notes, check, currentNote }) => (    
+                       <React.Fragment>
+                         <Score score={session.score}/>
+                         <ButtonBar
+                           notes={notes}
+                           check={check}
+                           currentNote={currentNote}
+                         />
+                       </React.Fragment>
+                      )}
+                    </Learn>
+                  )}
+                </Stave>
               </Paper>
             )}
           />
@@ -76,11 +80,4 @@ class App extends Component {
   }
 }
 
-export default withStyles(styles)(App)
-
-// export default withStyles(styles)(
-//   connect(
-//     mapStateToProps,
-//     mapDispatchToProps
-//   )(App)
-// );
+export default withStyles(styles)(App);

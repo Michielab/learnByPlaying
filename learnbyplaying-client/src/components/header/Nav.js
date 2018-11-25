@@ -1,15 +1,15 @@
 import React, { Component } from 'react';
 import { createStyles, withStyles, Paper } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
-import IconButton from '@material-ui/core/IconButton';
-import MenuIcon from '@material-ui/icons/Menu';
 import PropTypes from 'prop-types';
-import { Link } from "react-router-dom";
+import { Link } from 'react-router-dom';
+
+import SimpleMenu from '~/components/menu/SimpleMenu';
 
 const styles = theme =>
   createStyles({
     root: {
-      backgroundColor: '#1F1F1F',
+      backgroundColor: '#191414',
       padding: '5px',
       height: '50px',
       color: 'rgba(255, 255, 255, 0.8)',
@@ -30,17 +30,18 @@ class Nav extends Component {
   render() {
     const { classes } = this.props;
     return (
-      <Paper className={classes.root}>
-        <IconButton
+      <Paper className={classes.root} square={true}>
+        {/* <IconButton
           // className={classes.menuButton}
           color="inherit"
           aria-label="Menu"
         >
           <MenuIcon />
-        </IconButton>
-        <Link to="/learn">Home</Link>
-        <Link to="/learning">Learning</Link>
-        <div className={classes.text}>Learning</div>
+        </IconButton> */}
+        <SimpleMenu />
+        {/* <Link to="/learn">Home</Link>
+        <Link to="/learning">Learning</Link> */}
+        {/* <div className={classes.text}>Learning</div> */}
         <Button classes={{ root: classes.button }}>Login </Button>
       </Paper>
     );
