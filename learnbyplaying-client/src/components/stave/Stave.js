@@ -1,11 +1,7 @@
 import React, { Component } from 'react';
 import NoteLine from '~/components/notes/NoteLine';
-import Note from '~/components/notes/Note';
 import Gsleutel from '~/Gsleutel.jpg';
-import ButtonBar from '~/components/buttons/ButtonBar';
 import { withStyles, createStyles } from '@material-ui/core';
-import Sound from 'react-sound';
-import { getNotes } from '~/components/notes/Notes';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import {
@@ -40,7 +36,8 @@ const styles = theme =>
       webkitBoxShadow: '4px 7px 10px 3px rgba(0,0,0,0.75)',
       mozBoxShadow: '4px 7px 10px 3px rgba(0,0,0,0.75)',
       boxShadow: '4px 7px 10px 3px rgba(0,0,0,0.75)',
-      borderRadius: '5px'
+      borderRadius: '5px',
+      marginTop: '200px'
     },
     stave: {
       width: '100%',
@@ -51,47 +48,22 @@ const styles = theme =>
 
 class Stave extends Component {
   container;
-  notes;
   constructor(props) {
     super(props);
     this.state = {
       width: '',
-      height: '',
-      number: '',
-      note: ''
+      height: ''
     };
   }
 
   componentDidMount() {
     this.update();
     window.addEventListener('resize', this.update);
-    if (this.props.session.gameOptions.started) {
-      this.nextNote(this.notes);
-    }
   }
 
   componentWillUnmount() {
     window.removeEventListener('resize', this.update);
   }
-
-  componentDidUpdate(prevProps, prevState) {
-    if (
-      prevProps.session.gameOptions.started !==
-      this.props.session.gameOptions.started
-    ) {
-      this.nextNote(this.notes);
-    }
-  }
-
-  nextNote = notes => {
-    let number = Math.floor(Math.random() * notes.length);
-    this.setState({ number });
-  };
-
-  check = answer => {
-    let currentNote = this.notes[this.state.number].name;
-    console.log(currentNote)
-  };
 
   containerRef = ref => {
     this.container = ref;
@@ -107,15 +79,8 @@ class Stave extends Component {
   };
 
   render() {
-    const { width, height, number } = this.state;
-    const {
-      classes,
-      gameOptions,
-      session,
-      setGameOptions,
-      deductPoints
-    } = this.props;
-
+    const { width, height } = this.state;
+    const { classes, session } = this.props;
     const middle = height / 2;
     let divider, end;
     width > 800 ? (end = 800 - 50) : (end = width - 50);
@@ -127,11 +92,12 @@ class Stave extends Component {
       [[50, middle + divider], [end, middle + divider]],
       [[50, middle + divider * 2], [end, middle + divider * 2]]
     ];
-    this.notes = getNotes(middle, divider, width, session.gameOptions.type);
-    let note = this.notes[number];
-
     return (
-      <div className={classes.staveContainer} ref={this.containerRef}>
+      <div
+        className={classes.staveContainer}
+        ref={this.containerRef}
+        id="staveContainer"
+      >
         <svg className={classes.stave}>
           <image
             href={Gsleutel}
@@ -142,14 +108,15 @@ class Stave extends Component {
           {vertices.map((vertice, index) => (
             <NoteLine key={index} vertices={vertice} />
           ))}
-          {note && (
-            <React.Fragment>
-              <Note cx={note.positionX} cy={note.positionY} line={note.line} />
-              <Sound url={note.sound} playStatus="PLAYING" />
-            </React.Fragment>
-          )}
+          {width &&
+            this.props.children({
+              middle,
+              divider,
+              width,
+              session: session,
+              ...this.props
+            })}
         </svg>
-        <ButtonBar notes={this.notes} check={this.check} />
       </div>
     );
   }

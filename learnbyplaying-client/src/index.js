@@ -7,6 +7,7 @@ import { Provider } from 'react-redux';
 import { createStore } from 'redux';
 import rootReducer from './ducks/ruducers/reducers';
 import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
+import 'typeface-work-sans';
 
 const store = createStore(rootReducer);
 

@@ -26,6 +26,14 @@ const styles = theme =>
       margin: '0 10px',
       '&:hover': {
         backgroundColor: '#212121'
+      },
+      '&:disabled': {
+        color: 'rgba(255, 255, 255, 0.8)',
+        cursor: 'pointer',
+        pointerEvents: 'unset',
+        '&:hover': {
+          backgroundColor: '#212121'
+        },
       }
     },
     rippleCorrect: {
@@ -37,7 +45,7 @@ const styles = theme =>
   });
 
 const buttonBar = props => {
-  const { classes, notes, check, currentNote } = props;
+  const { classes, notes, check, currentNote, buttonDisabled } = props;
 
   return (
     <div className={classes.buttonBar}>
@@ -45,6 +53,7 @@ const buttonBar = props => {
         return (
           index < 7 && (
             <Button
+              disabled={buttonDisabled}
               classes={{ root: classes.button }}
               TouchRippleProps={{
                 className:

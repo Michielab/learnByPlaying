@@ -1,45 +1,69 @@
-import G from '../../sounds/fKey/Gsleutel.m4a';
+import Clow from '../../sounds/fKey/C-low.m4a';
+import Dlow from '../../sounds/fKey/D-low.m4a';
+import Elow from '../../sounds/fKey/E-low.m4a';
+import Flow from '../../sounds/fKey/F-low.m4a';
+import Glow from '../../sounds/fKey/G-low.m4a';
+import Alow from '../../sounds/fKey/A-low.m4a';
+import Blow from '../../sounds/fKey/B-low.m4a';
+
+import Chigh from '../../sounds/fKey/C-high.m4a';
+import Dhigh from '../../sounds/fKey/D-high.m4a';
+import Ehigh from '../../sounds/fKey/E-high.m4a';
+import Fhigh from '../../sounds/fKey/F-high.m4a';
+import Ghigh from '../../sounds/fKey/G-high.m4a';
+import Ahigh from '../../sounds/fKey/A-high.m4a';
 
 const notes = {
   fKeySimple: [
     {
       name: 'C',
+      sound: Clow,
       line: true
     },
     {
-      name: 'D'
+      name: 'D',
+      sound: Dlow
     },
     {
-      name: 'E'
+      name: 'E',
+      sound: Elow
     },
     {
-      name: 'F'
+      name: 'F',
+      sound: Flow
     },
     {
       name: 'G',
-      sound: G
-    },
-    {
-      name: 'A'
-    },
-    { name: 'B' },
-    {
-      name: 'C'
-    },
-    {
-      name: 'D'
-    },
-    {
-      name: 'E'
-    },
-    {
-      name: 'F'
-    },
-    {
-      name: 'G'
+      sound: Glow
     },
     {
       name: 'A',
+      sound: Alow
+    },
+    { name: 'B', sound: Blow },
+    {
+      name: 'C',
+      sound: Chigh
+    },
+    {
+      name: 'D',
+      sound: Dhigh
+    },
+    {
+      name: 'E',
+      sound: Ehigh
+    },
+    {
+      name: 'F',
+      sound: Fhigh
+    },
+    {
+      name: 'G',
+      sound: Ghigh
+    },
+    {
+      name: 'A',
+      sound: Ahigh,
       line: true
     }
   ]

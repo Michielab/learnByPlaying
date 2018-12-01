@@ -3,11 +3,12 @@ import { BrowserRouter as Router, Route } from 'react-router-dom';
 
 /* Import components */
 import Nav from '~/components/header/Nav';
-import Stave from '~/components/stave/Stave2';
+import Stave from '~/components/stave/Stave';
 import GameOptions from '~/components/game/GameOptions';
 import Learn from '~/components/learn/Learn';
 import ButtonBar from '~/components/buttons/ButtonBar';
 import Score from '~/components/score/Score';
+
 /* Import MaterialUI components */
 import { withStyles, createStyles } from '@material-ui/core';
 import Paper from '@material-ui/core/Paper';
@@ -58,13 +59,14 @@ class App extends Component {
                 <Stave>
                   {({ ...props, session }) => (
                     <Learn {...props}>
-                      {({ notes, check, currentNote }) => (    
+                      {({ notes, check, currentNote, buttonDisabled }) => (    
                        <React.Fragment>
                          <Score score={session.score}/>
                          <ButtonBar
                            notes={notes}
                            check={check}
                            currentNote={currentNote}
+                           buttonDisabled={buttonDisabled}
                          />
                        </React.Fragment>
                       )}

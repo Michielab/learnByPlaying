@@ -12,6 +12,8 @@ const Note = props => {
         stroke="black"
         fill="transparent"
         strokeWidth="3"
+        onClick={props.onClick}
+        style={{cursor: 'pointer'}}
       />
       {props.line === true && (
         <line
@@ -30,7 +32,8 @@ const Note = props => {
 Note.propTypes = {
   cx: PropTypes.number,
   cy: PropTypes.number,
-  line: PropTypes.bool
+  line: PropTypes.bool,
+  onClick: PropTypes.func
 };
 
 export default Note;
