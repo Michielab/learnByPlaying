@@ -9,7 +9,8 @@ import SimpleMenu from '~/components/menu/SimpleMenu';
 const styles = theme =>
   createStyles({
     root: {
-      backgroundColor: '#191414',
+      // backgroundColor: '#191414',
+      backgroundColor: '#000',
       padding: '5px',
       height: '50px',
       color: 'rgba(255, 255, 255, 0.8)',

@@ -54,6 +54,8 @@ const buttonBar = props => {
           index < 7 && (
             <Button
               disabled={buttonDisabled}
+              draggable={true}
+              onDrag={(e)=>{console.log(e)}}
               classes={{ root: classes.button }}
               TouchRippleProps={{
                 className:

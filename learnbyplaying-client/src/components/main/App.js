@@ -8,6 +8,7 @@ import GameOptions from '~/components/game/GameOptions';
 import Learn from '~/components/learn/Learn';
 import ButtonBar from '~/components/buttons/ButtonBar';
 import Score from '~/components/score/Score';
+import Compose from '~/components/compose/Compose';
 
 /* Import MaterialUI components */
 import { withStyles, createStyles } from '@material-ui/core';
@@ -33,9 +34,11 @@ const styles = theme =>
       height: '100vh'
     },
     container: {
-      // backgroundColor: '#333333',
+      backgroundColor: '#212121',
 
-      backgroundColor: '#535353',
+      // backgroundColor: '#6b5564',
+      // background: 'linear-gradient(to bottom, #ba7ab4 0%, #020202 113%)',
+      // background: 'linear-gradient(to bottom, #885680 9%, #050304 118%)',
       height: '100%',
       display: 'flex',
       flexDirection: 'column',
@@ -57,7 +60,7 @@ class App extends Component {
             component={() => (
               <Paper className={classes.container} elevation={0} square={true}>
                 <Stave>
-                  {({ ...props, session }) => (
+                  {({...props, session   }) => (
                     <Learn {...props}>
                       {({ notes, check, currentNote, buttonDisabled }) => (    
                        <React.Fragment>
@@ -71,6 +74,20 @@ class App extends Component {
                        </React.Fragment>
                       )}
                     </Learn>
+                  )}
+                </Stave>
+              </Paper>
+            )}
+          />
+         <Route
+            path="/compose"
+            component={() => (
+              <Paper className={classes.container} elevation={0} square={true}>
+                <Stave>
+                  {({ ...props, session }) => (
+                    <Compose {...props}>
+        
+                    </Compose>
                   )}
                 </Stave>
               </Paper>
