@@ -86,7 +86,31 @@ class App extends Component {
                 <Stave>
                   {({ ...props, session }) => (
                     <Compose {...props}>
-        
+                 {({ cx, cy, mouseDown, mouseUp }) => (    
+                       <React.Fragment>
+                         <svg style={{width: '100%', background: 'white', height: '60px', marginTop: '30px',      webkitBoxShadow: '4px 7px 10px 3px rgba(0,0,0,0.75)',
+      mozBoxShadow: '4px 7px 10px 3px rgba(0,0,0,0.75)',
+      boxShadow: '4px 7px 10px 3px rgba(0,0,0,0.75)',
+      borderRadius: '5px',}}>
+      
+      <ellipse
+        cx={cx}
+        cy={cy}
+        rx="15"
+        ry="10"
+        stroke="black"
+        fill="transparent"
+        strokeWidth="3"
+        style={{ cursor: 'pointer' }}
+        onMouseDown={mouseDown}
+        onMouseUp={mouseUp}
+        draggable={true}
+        onDragStart={()=>{console.log('hiii')}}
+      />
+      
+      </svg>
+                       </React.Fragment>
+                      )}
                     </Compose>
                   )}
                 </Stave>

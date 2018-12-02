@@ -98,7 +98,7 @@ class Stave extends Component {
         ref={this.containerRef}
         id="staveContainer"
       >
-        <svg className={classes.stave} onDragOver={(e)=>{e.preventDefault()}}>
+        <svg className={classes.stave} id="test" >
           <image
             href={Gsleutel}
             x="0"
@@ -113,6 +113,7 @@ class Stave extends Component {
               middle,
               divider,
               width,
+              height,
               session: session,
               ...this.props
             })}

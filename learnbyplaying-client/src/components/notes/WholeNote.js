@@ -7,17 +7,16 @@ import Sound from 'react-sound';
 import { getNotes } from '~/components/notes/Notes';
 
 /* Import Note component  */
-import WholeNote from '~/components/notes/WholeNote';
+import Note from '~/components/notes/Note';
 
-class Compose extends Component {
+class WholeNote extends Component {
   coords;
   state = {
-    cx: 30,
-    cy: 30
+    cx: this.props.x,
+    cy: this.props.height - 20
   };
 
   handleMouseDown = e => {
-    // document.getElementById("test").appendChild(e.target); 
     this.coords = {
       x: e.pageX,
       y: e.pageY
@@ -49,17 +48,25 @@ class Compose extends Component {
 
   render() {
     const { cx, cy } = this.state;
-    const { middle, divider, width, session, height } = this.props;
+    // const { middle, divider, width, session } = this.props;
     const domNode = document.getElementById('staveContainer');
 
-    return <React.Fragment>
-        <WholeNote height={height} x={100}/>
-        <WholeNote height={height} x={200}/>
-    </React.Fragment>
+    return <ellipse
+        cx={cx}
+        cy={cy}
+        rx="15"
+        ry="10"
+        stroke="black"
+        fill="transparent"
+        strokeWidth="3"
+        style={{ cursor: 'pointer' }}
+        onMouseDown={this.handleMouseDown}
+        onMouseUp={this.handleMouseUp}
+      />
   }
 }
 
-Compose.propTypes = {
+WholeNote.propTypes = {
   addPoints: PropTypes.func,
   children: PropTypes.func,
   classes: PropTypes.object,
@@ -71,6 +78,4 @@ Compose.propTypes = {
   width: PropTypes.number
 };
 
-export default Compose;
-
-// ReactDOM.createPortal(this.props.children({cx,cy, mouseDown: this.handleMouseDown, mouseUp: this.handleMouseUp }), domNode)
+export default WholeNote;
