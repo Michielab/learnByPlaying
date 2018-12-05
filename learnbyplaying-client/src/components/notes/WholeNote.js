@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import Sound from 'react-sound';
 
 /* Helper function to get notes  */
-import { getNotes } from '~/components/notes/Notes';
+import { getNotes, notesCompose } from '~/components/notes/Notes';
 
 /* Import Note component  */
 import Note from '~/components/notes/Note';
@@ -26,6 +26,25 @@ class WholeNote extends Component {
 
   handleMouseUp = () => {
     document.removeEventListener('mousemove', this.handleMouseMove);
+    const { cx, cy } = this.state;
+    const { id } = this.props;
+    // this.getExactNote(cy);
+    // this.correctXposition(cx)
+    const exactNote = this.getExactNote(cy);
+    const xPosition = this.correctXposition(cx);
+
+    let note = {
+      cy: exactNote.positionY,
+      cx: xPosition,
+      ...exactNote,
+      positionX: xPosition,
+      id
+    };
+    this.setState({
+      ...note
+    });
+    // console.log(this.getExactNote(cy), this.correctXposition(cx));
+    this.props.addNote(note);
     this.coords = {};
   };
 
@@ -42,6 +61,36 @@ class WholeNote extends Component {
     });
   };
 
+  getExactNote = y => {
+    const { standardNotes } = this.props;
+
+    let placedNote =
+      y > standardNotes[0].positionY
+        ? standardNotes[0]
+        : y < standardNotes[standardNotes.length - 1].positionY
+        ? standardNotes[standardNotes.length - 1]
+        : standardNotes.filter(
+            note =>
+              y < note.positionY + 6.25 && y >= note.positionY - 6.25 && note
+          )[0];
+    return placedNote;
+  };
+
+  correctXposition = x => {
+    const { composedNotes, id } = this.props;
+    composedNotes
+      .filter(el => el.id !== id)
+      .map(note => {
+        x > note.positionX - 48 &&
+          x <= note.positionX &&
+          (x = note.positionX - 50);
+        x <= note.positionX + 48 &&
+          x >= note.positionX &&
+          (x = note.positionX + 50);
+      });
+    return x;
+  };
+
   componentDidMount() {}
 
   componentWillUnmount() {}
@@ -51,7 +100,8 @@ class WholeNote extends Component {
     // const { middle, divider, width, session } = this.props;
     const domNode = document.getElementById('staveContainer');
 
-    return <ellipse
+    return (
+      <ellipse
         cx={cx}
         cy={cy}
         rx="15"
@@ -63,6 +113,7 @@ class WholeNote extends Component {
         onMouseDown={this.handleMouseDown}
         onMouseUp={this.handleMouseUp}
       />
+    );
   }
 }
 

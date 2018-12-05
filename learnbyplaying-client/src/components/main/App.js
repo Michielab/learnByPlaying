@@ -85,6 +85,18 @@ class App extends Component {
               <Paper className={classes.container} elevation={0} square={true}>
                 <Stave>
                   {({ ...props, session }) => (
+                    <Compose {...props} />
+                  )}
+                </Stave>
+              </Paper>
+            )}
+          />
+         {/* <Route
+            path="/compose"
+            component={() => (
+              <Paper className={classes.container} elevation={0} square={true}>
+                <Stave>
+                  {({ ...props, session }) => (
                     <Compose {...props}>
                  {({ cx, cy, mouseDown, mouseUp }) => (    
                        <React.Fragment>
@@ -116,7 +128,7 @@ class App extends Component {
                 </Stave>
               </Paper>
             )}
-          />
+          /> */}
         </Paper>
       </Router>
     );

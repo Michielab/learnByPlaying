@@ -12,22 +12,19 @@ import WholeNote from '~/components/notes/WholeNote';
 class Compose extends Component {
   coords;
   state = {
-    cx: 30,
-    cy: 30
+    composedNotes: []
   };
 
   handleMouseDown = e => {
-    // document.getElementById("test").appendChild(e.target); 
-    this.coords = {
-      x: e.pageX,
-      y: e.pageY
-    };
-    document.addEventListener('mousemove', this.handleMouseMove);
+    // document.getElementById("test").appendChild(e.target);
   };
 
-  handleMouseUp = () => {
-    document.removeEventListener('mousemove', this.handleMouseMove);
-    this.coords = {};
+  handleMouseUp = ({ id, ...note }) => {
+    let notes = this.state.composedNotes;
+    notes = notes.filter(note => note.id !== id);
+    notes.push({ id, ...note });
+    this.setState({ composedNotes: notes });
+    console.log(this.state.composedNotes)
   };
 
   handleMouseMove = e => {
@@ -48,14 +45,36 @@ class Compose extends Component {
   componentWillUnmount() {}
 
   render() {
-    const { cx, cy } = this.state;
+    const { cx, cy, composedNotes } = this.state;
     const { middle, divider, width, session, height } = this.props;
+    const standardNotes = getNotes(
+      middle,
+      divider,
+      width,
+      session.gameOptions.type
+    );
     const domNode = document.getElementById('staveContainer');
-
-    return <React.Fragment>
-        <WholeNote height={height} x={100}/>
-        <WholeNote height={height} x={200}/>
-    </React.Fragment>
+    console.log(this.state.notes);
+    return (
+      <React.Fragment>
+        <WholeNote
+          composedNotes={composedNotes}
+          height={height}
+          x={100}
+          addNote={this.handleMouseUp}
+          id="1"
+          standardNotes={standardNotes}
+        />
+        <WholeNote
+          composedNotes={composedNotes}
+          height={height}
+          x={200}
+          addNote={this.handleMouseUp}
+          id="2"
+          standardNotes={standardNotes}
+        />
+      </React.Fragment>
+    );
   }
 }
 
