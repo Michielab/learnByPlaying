@@ -27,17 +27,20 @@ const styles = theme =>
   createStyles({
     staveContainer: {
       backgroundColor: 'white',
+      // height: '40%',
       height: '40%',
-      width: '50%',
+      // width: '50%',
+      width: '90%',
       minWidth: '400px',
-      minHeight: ' 200px',
-      maxWidth: '650px',
-      maxHeight: '400px',
+      minHeight: ' 300px',
+      // maxWidth: '650px',
+      // maxHeight: '400px',
       webkitBoxShadow: '4px 7px 10px 3px rgba(0,0,0,0.75)',
       mozBoxShadow: '4px 7px 10px 3px rgba(0,0,0,0.75)',
       boxShadow: '4px 7px 10px 3px rgba(0,0,0,0.75)',
       borderRadius: '5px',
-      marginTop: '200px'
+      // marginTop: '200px'
+         marginTop: '20px'
     },
     stave: {
       width: '100%',
@@ -83,7 +86,7 @@ class Stave extends Component {
     const { classes, session } = this.props;
     const middle = height / 2;
     let divider, end;
-    width > 800 ? (end = 800 - 50) : (end = width - 50);
+    width > 8000 ? (end = 800 - 50) : (end = width - 50);
     height < 125 ? (divider = 15) : (divider = 25);
     const vertices = [
       [[50, middle - divider * 2], [end, middle - divider * 2]],
@@ -119,6 +122,7 @@ class Stave extends Component {
             })}
         </svg>
       </div>
+      
     );
   }
 }

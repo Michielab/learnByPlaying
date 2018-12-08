@@ -13,6 +13,8 @@ import Fhigh from '../../sounds/fKey/F-high.m4a';
 import Ghigh from '../../sounds/fKey/G-high.m4a';
 import Ahigh from '../../sounds/fKey/A-high.m4a';
 
+export const startPointX = 160;
+
 const notes = {
   fKeySimple: [
     {
@@ -70,7 +72,7 @@ const notes = {
 };
 
 export function getNotes(middle, divider, width, game) {
-  let startPointX = 160;
+  startPointX;
   let x = (width - startPointX) / notes[game].length;
   let dividerNotes = divider / 2;
   return notes[game].map((note, index) => {
@@ -82,7 +84,7 @@ export function getNotes(middle, divider, width, game) {
   });
 }
 
-// const notes = [
+// export const notesCompose = [
 //   {
 //     name: 'C',
 //     positionX: startPointX,

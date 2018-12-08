@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 /* Import start point  */
 import { startPointX } from '~/components/notes/Notes';
 
-class WholeNote extends Component {
+class HalfNote extends Component {
   coords;
   state = {
     positionX: this.props.positionX,
@@ -119,25 +119,21 @@ class WholeNote extends Component {
           rx="15"
           ry="10"
           stroke="black"
-          fill="black"
+          fill="transparent"
           strokeWidth="3"
           style={{ cursor: 'pointer' }}
           onMouseDown={this.handleMouseDown}
           onMouseUp={this.handleMouseUp}
         />
-        <ellipse
-          cx={positionX}
-          cy={positionY}
-          rx="12"
-          ry="8"
+        <line
+          x1={positionX + 15}
+          y1={positionY - 40}
+          x2={positionX + 15}
+          y2={positionY}
+          strokeWidth="3"
           stroke="black"
-          fill="white"
-          strokeWidth="1"
-          style={{ cursor: 'pointer' }}
-          onMouseDown={this.handleMouseDown}
-          onMouseUp={this.handleMouseUp}
         />
-  
+
         {this.props.line === true && (
           <line
             x1={positionX - 20}
@@ -153,7 +149,7 @@ class WholeNote extends Component {
   }
 }
 
-WholeNote.propTypes = {
+HalfNote.propTypes = {
   addNote: PropTypes.func,
   id: PropTypes.string,
   standardNotes: PropTypes.array,
@@ -162,4 +158,4 @@ WholeNote.propTypes = {
   height: PropTypes.number
 };
 
-export default WholeNote;
+export default HalfNote;
