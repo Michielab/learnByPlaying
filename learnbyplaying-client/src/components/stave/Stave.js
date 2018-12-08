@@ -27,20 +27,28 @@ const styles = theme =>
   createStyles({
     staveContainer: {
       backgroundColor: 'white',
-      // height: '40%',
       height: '40%',
-      // width: '50%',
-      width: '90%',
+      width: '50%',
       minWidth: '400px',
       minHeight: ' 300px',
-      // maxWidth: '650px',
-      // maxHeight: '400px',
+      maxWidth: '650px',
+      maxHeight: '400px',
+      webkitBoxShadow: '4px 7px 10px 3px rgba(0,0,0,0.75)',
+      mozBoxShadow: '4px 7px 10px 3px rgba(0,0,0,0.75)',
+      boxShadow: '4px 7px 10px 3px rgba(0,0,0,0.75)',
+      borderRadius: '5px'
+    },
+    composeContainer: {
+      backgroundColor: 'white',
+      width: '90%',
+      height: '50%',
+      minWidth: '400px',
+      minHeight: ' 300px',
       webkitBoxShadow: '4px 7px 10px 3px rgba(0,0,0,0.75)',
       mozBoxShadow: '4px 7px 10px 3px rgba(0,0,0,0.75)',
       boxShadow: '4px 7px 10px 3px rgba(0,0,0,0.75)',
       borderRadius: '5px',
-      // marginTop: '200px'
-         marginTop: '20px'
+      marginTop: '20px'
     },
     stave: {
       width: '100%',
@@ -83,7 +91,8 @@ class Stave extends Component {
 
   render() {
     const { width, height } = this.state;
-    const { classes, session } = this.props;
+    const { classes, session, location } = this.props;
+    const learning = location.pathname === '/learning' ? true : false;
     const middle = height / 2;
     let divider, end;
     width > 8000 ? (end = 800 - 50) : (end = width - 50);
@@ -97,11 +106,11 @@ class Stave extends Component {
     ];
     return (
       <div
-        className={classes.staveContainer}
+        className={learning ? classes.staveContainer : classes.composeContainer}
         ref={this.containerRef}
         id="staveContainer"
       >
-        <svg className={classes.stave} id="test" >
+        <svg className={classes.stave} id="test">
           <image
             href={Gsleutel}
             x="0"
@@ -122,7 +131,6 @@ class Stave extends Component {
             })}
         </svg>
       </div>
-      
     );
   }
 }

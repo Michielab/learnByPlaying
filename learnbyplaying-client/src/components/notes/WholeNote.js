@@ -15,6 +15,15 @@ class WholeNote extends Component {
     document.removeEventListener('mousemove', this.handleMouseMove);
   }
 
+  componentDidUpdate(prevProps) {
+    if (prevProps.width !== this.props.width) {
+      this.setState({
+        positionX: this.props.positionX,
+        positionY: this.props.positionY
+      });
+    }
+  }
+
   handleMouseDown = e => {
     this.coords = {
       x: e.pageX,
@@ -111,6 +120,7 @@ class WholeNote extends Component {
 
   render() {
     const { positionX, positionY } = this.state;
+    const { handleContextMenu, id } = this.props;
     return (
       <svg>
         <ellipse
@@ -124,6 +134,7 @@ class WholeNote extends Component {
           style={{ cursor: 'pointer' }}
           onMouseDown={this.handleMouseDown}
           onMouseUp={this.handleMouseUp}
+          onContextMenu={(e) => {handleContextMenu(id); e.preventDefault()}}
         />
         <ellipse
           cx={positionX}
@@ -136,8 +147,9 @@ class WholeNote extends Component {
           style={{ cursor: 'pointer' }}
           onMouseDown={this.handleMouseDown}
           onMouseUp={this.handleMouseUp}
+          onContextMenu={(e) => {handleContextMenu(id); e.preventDefault()}}
         />
-  
+
         {this.props.line === true && (
           <line
             x1={positionX - 20}
@@ -146,7 +158,8 @@ class WholeNote extends Component {
             y2={positionY}
             strokeWidth="3"
             stroke="black"
-          />
+            onContextMenu={(e) => {handleContextMenu(id); e.preventDefault()}}
+            />
         )}
       </svg>
     );

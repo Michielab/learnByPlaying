@@ -31,9 +31,9 @@ const mapDispatchToProps = dispatch => {
 const ConnectedButton = connect(
   mapStateToProps,
   mapDispatchToProps
-)(({ togglePlaying, playButton, playing }) => {
+)(({ togglePlaying, playButton, stopButton, playing }) => {
   return (
-    <Button onClick={togglePlaying} classes={{ root: playButton }}>
+    <Button onClick={togglePlaying} classes={{ root: playing ? stopButton : playButton }} disableRipple={true}>
       {playing ? 'Stop' : 'Play'}
     </Button>
   );
@@ -57,7 +57,7 @@ const styles = theme =>
     },
     container: {
       backgroundColor: '#212121',
-
+      overflow: 'scroll',
       // backgroundColor: '#6b5564',
       // background: 'linear-gradient(to bottom, #ba7ab4 0%, #020202 113%)',
       // background: 'linear-gradient(to bottom, #885680 9%, #050304 118%)',
@@ -74,6 +74,14 @@ const styles = theme =>
         backgroundColor: '#2FD566'
       },
       color: '#FFFFFF'
+    },
+    stopButton: {
+      marginTop: '100px',
+      backgroundColor: 'red',
+      '&:hover': {
+        backgroundColor: 'red'
+      },
+      color: '#FFFFFF'
     }
   });
 
@@ -88,10 +96,10 @@ class App extends Component {
           <Route exact path="/learn" component={GameOptions} />
           <Route
             path="/learning"
-            component={() => (
+            component={({location}) => (
               <Paper className={classes.container} elevation={0} square={true}>
-                <Stave>
-                  {({ session, ...props }) => (
+                <Stave location={location}>
+                  {({ ...props, session }) => (
                     <Learn {...props}>
                       {({ notes, check, currentNote, buttonDisabled }) => (
                         <React.Fragment>
@@ -112,10 +120,11 @@ class App extends Component {
           />
           <Route
             path="/compose"
-            component={() => (
+            component={({location}) => (
               <Paper className={classes.container}>
-                <Stave>{({ ...props }) => <Compose {...props} />}</Stave>
-                <ConnectedButton playButton={classes.playButton} />
+                <Stave location={location}>{({ ...props }) => <Compose {...props} />}</Stave>
+                {/* <Stave>{({ ...props }) => <Compose {...props} />}</Stave> */}
+                <ConnectedButton playButton={classes.playButton} stopButton={classes.stopButton}/>
               </Paper>
             )}
           />

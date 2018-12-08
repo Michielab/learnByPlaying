@@ -15,6 +15,15 @@ class QuarterNote extends Component {
     document.removeEventListener('mousemove', this.handleMouseMove);
   }
 
+  componentDidUpdate(prevProps) {
+    if (prevProps.width !== this.props.width) {
+      this.setState({
+        positionX: this.props.positionX,
+        positionY: this.props.positionY
+      });
+    }
+  }
+
   handleMouseDown = e => {
     this.coords = {
       x: e.pageX,
@@ -124,6 +133,7 @@ class QuarterNote extends Component {
           style={{ cursor: 'pointer' }}
           onMouseDown={this.handleMouseDown}
           onMouseUp={this.handleMouseUp}
+          onContextMenu={e =>{ e.preventDefault(); e.stopPropagation()}}
         />
           <line
             x1={positionX + 15}
@@ -132,7 +142,8 @@ class QuarterNote extends Component {
             y2={positionY}
             strokeWidth="3"
             stroke="black"
-          />
+            onContextMenu={e =>{ e.preventDefault(); e.stopPropagation()}}
+            />
   
         {this.props.line === true && (
           <line
@@ -142,7 +153,8 @@ class QuarterNote extends Component {
             y2={positionY}
             strokeWidth="3"
             stroke="black"
-          />
+            onContextMenu={e =>{ e.preventDefault(); e.stopPropagation()}}
+            />
         )}
       </svg>
     );
