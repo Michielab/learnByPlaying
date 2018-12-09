@@ -9,11 +9,16 @@ import WholeNote from '~/components/notes/WholeNote';
 import QuarterNote from '~/components/notes/QuarterNote';
 import HalfNote from '~/components/notes/HalfNote';
 import PlayNote from '~/components/compose/PlayNote';
+import SmartNote from '~/components/notes/SmartNote';
+
+const WholeNoteSmart = SmartNote(WholeNote);
+const QuarterNoteSmart = SmartNote(QuarterNote);
+const HalfNoteSmart = SmartNote(HalfNote);
 
 const noteComponents = {
-  wholeNote: WholeNote,
-  halfNote: HalfNote,
-  quarterNote: QuarterNote
+  wholeNote: WholeNoteSmart,
+  halfNote: HalfNoteSmart,
+  quarterNote: QuarterNoteSmart
 };
 
 function basicNotes(width, height) {
@@ -45,12 +50,29 @@ class Compose extends Component {
   };
 
   componentDidUpdate(prevProps) {
-    if (prevProps.width !== this.props.width) {
-      this.setState({
-        notes: basicNotes(this.props.width, this.props.height)
-      });
+    if (
+      prevProps.width !== this.props.width ||
+      prevProps.middle !== this.props.middle
+    ) {
+      const positionYDifference = prevProps.middle - this.props.middle;
+      this.handleUpdate(positionYDifference);
     }
   }
+
+  handleUpdate = positionYDifference => {
+    const { composedNotes } = this.state;
+    let updatedComposedNotes =
+      composedNotes &&
+      !!composedNotes.length &&
+      composedNotes.map(note => {
+        return { ...note, positionY: note.positionY - positionYDifference };
+      });
+
+    this.setState({
+      notes: basicNotes(this.props.width, this.props.height),
+      composedNotes: updatedComposedNotes
+    });
+  };
 
   handleComposedNotes = id => {
     let notes = this.state.composedNotes;
@@ -80,7 +102,7 @@ class Compose extends Component {
   };
 
   render() {
-    const { composedNotes, notes } = this.state;
+    const { composedNotes = [], notes } = this.state;
     const { middle, divider, width, session, height } = this.props;
     const standardNotes = getNotes(
       middle,
@@ -91,9 +113,10 @@ class Compose extends Component {
 
     return (
       <React.Fragment>
-        {!!composedNotes.length &&
+        {composedNotes &&
+          !!composedNotes.length &&
           composedNotes.map(note => {
-            let strippedId = note.id.replace(/[0-9]/g, '');
+            const strippedId = note.id.replace(/[0-9]/g, '');
             const Note = noteComponents[strippedId];
             return (
               <Note

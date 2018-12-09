@@ -1,5 +1,5 @@
-import React, { Component } from 'react';
-import { createStyles, withStyles, Paper } from '@material-ui/core';
+import React from 'react';
+import { createStyles, withStyles } from '@material-ui/core';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
 import { Link } from 'react-router-dom';
@@ -39,7 +39,7 @@ class SimpleMenu extends React.Component {
 
   render() {
     const { anchorEl } = this.state;
-    const {classes } = this.props;
+    const { classes } = this.props;
     return (
       <div className={classes.container}>
         <IconButton
@@ -55,21 +55,30 @@ class SimpleMenu extends React.Component {
           anchorEl={anchorEl}
           open={Boolean(anchorEl)}
           onClose={this.handleClose}
-          classes={{paper: classes.menu}}
+          classes={{ paper: classes.menu }}
         >
           {/* <MenuItem onClick={this.handleClose}>Profile</MenuItem> */}
 
           <MenuItem onClick={this.handleClose}>
-            <Link to="/" className={classes.link}>Home</Link>
+            <Link to="/" className={classes.link}>
+              Home
+            </Link>
           </MenuItem>
           <MenuItem onClick={this.handleClose}>
-            <Link to="/learn" className={classes.link}>Learn</Link>
+            <Link to="/learn" className={classes.link}>
+              Learn
+            </Link>
           </MenuItem>
-          <MenuItem onClick={this.handleClose}> <Link to="/compose" className={classes.link}>Compose</Link></MenuItem>
+          <MenuItem onClick={this.handleClose}>
+            {' '}
+            <Link to="/compose" className={classes.link}>
+              Compose
+            </Link>
+          </MenuItem>
         </Menu>
       </div>
     );
   }
 }
 
-export default withStyles(styles)(SimpleMenu)
+export default withStyles(styles)(SimpleMenu);

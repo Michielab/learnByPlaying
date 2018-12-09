@@ -17,22 +17,22 @@ const defaultState = {
 
 const session = (state = defaultState, action) => {
   switch (action.type) {
-    case 'ADD_POINTS':
+    case ADD_POINTS:
       return {
         ...state,
         score: state.score + 25
       };
-    case 'DEDUCT_POINTS':
+    case DEDUCT_POINTS:
       return {
         ...state,
         score: state.score - 5
       };
-    case 'SET_GAMEOPTIONS':
+    case SET_GAMEOPTIONS:
       return {
         ...state,
         gameOptions: { ...action.payload.gameOptions }
       };
-    case 'TOGGLE_PLAYING':
+    case TOGGLE_PLAYING:
       return {
         ...state,
         gameOptions: {

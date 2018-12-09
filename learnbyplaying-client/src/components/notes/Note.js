@@ -13,7 +13,7 @@ const Note = props => {
         fill="transparent"
         strokeWidth="3"
         onClick={props.onClick}
-        style={{cursor: 'pointer'}}
+        style={{ cursor: 'pointer' }}
       />
       {props.line === true && (
         <line

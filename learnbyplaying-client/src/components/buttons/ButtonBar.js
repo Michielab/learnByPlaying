@@ -59,7 +59,7 @@ const buttonBar = props => {
               classes={{ root: classes.button }}
               TouchRippleProps={{
                 className:
-                  currentNote.name == note.name
+                  currentNote.name === note.name
                     ? classes.rippleCorrect
                     : classes.rippleWrong
               }}

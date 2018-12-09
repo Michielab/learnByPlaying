@@ -3,6 +3,9 @@ import { BrowserRouter as Router, Route } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { togglePlaying } from '~/ducks/actions/actions';
+import { Scrollbars } from 'react-custom-scrollbars';
+
+
 /* Import components */
 import Nav from '~/components/header/Nav';
 import Stave from '~/components/stave/Stave';
@@ -55,20 +58,24 @@ const styles = theme =>
       backgroundColor: '#333333',
       height: '100vh'
     },
+    scrollBar: {
+      width: 'auto',
+      height: '100%'
+    },
     container: {
       backgroundColor: '#212121',
-      overflow: 'scroll',
       // backgroundColor: '#6b5564',
       // background: 'linear-gradient(to bottom, #ba7ab4 0%, #020202 113%)',
       // background: 'linear-gradient(to bottom, #885680 9%, #050304 118%)',
       height: '100%',
+      minHeight: '600px',
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center',
       justifyContent: 'center'
     },
     playButton: {
-      marginTop: '100px',
+      marginTop: '5%',
       backgroundColor: '#2FD566',
       '&:hover': {
         backgroundColor: '#2FD566'
@@ -76,7 +83,7 @@ const styles = theme =>
       color: '#FFFFFF'
     },
     stopButton: {
-      marginTop: '100px',
+      marginTop: '5%',
       backgroundColor: 'red',
       '&:hover': {
         backgroundColor: 'red'
@@ -86,11 +93,23 @@ const styles = theme =>
   });
 
 class App extends Component {
+  state = {
+    staves: [1]
+  }
+
+  handleAdd = () => {
+    let newArrayStaves = this.state.staves;
+    newArrayStaves.push(newArrayStaves.length++)
+    this.setState({
+      staves: newArrayStaves
+    })
+  }
   render() {
     const { classes } = this.props;
     return (
       <Router>
         <Paper className={classes.root} elevation={0} square={true}>
+        <Scrollbars className={classes.scrollBar}>
           <Nav />
           <Route exact path="/" component={() => <div>home</div>} />
           <Route exact path="/learn" component={GameOptions} />
@@ -121,13 +140,19 @@ class App extends Component {
           <Route
             path="/compose"
             component={({location}) => (
+                    // <Scrollbars className={classes.scrollBar}>
               <Paper className={classes.container}>
+               {this.state.staves.map((stave,index) =>
                 <Stave location={location}>{({ ...props }) => <Compose {...props} />}</Stave>
+               )} 
                 {/* <Stave>{({ ...props }) => <Compose {...props} />}</Stave> */}
                 <ConnectedButton playButton={classes.playButton} stopButton={classes.stopButton}/>
+              <Button onClick={this.handleAdd}>Add</Button>
               </Paper>
+                // </Scrollbars>
             )}
           />
+                          </Scrollbars>
         </Paper>
       </Router>
     );

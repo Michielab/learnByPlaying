@@ -14,6 +14,10 @@ class PlayNote extends Component {
     this.createInterval();
   }
 
+  componentWillUnmount() {
+    clearInterval(this.interval);
+  }
+
   createInterval = () => {
     this.index++;
     this.interval = setInterval(() => {
@@ -33,14 +37,12 @@ class PlayNote extends Component {
 
   render() {
     const { activeNoteSound } = this.state;
-    return (
-      <div>
-        <Sound url={activeNoteSound} playStatus={'PLAYING'} />
-      </div>
-    );
+    return <Sound url={activeNoteSound} playStatus={'PLAYING'} />;;
   }
 }
 
-PlayNote.propTypes = {};
+PlayNote.propTypes = {
+  composedNotes: PropTypes.array
+};
 
 export default PlayNote;

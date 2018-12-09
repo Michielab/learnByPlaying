@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { createStyles, withStyles, Paper } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 import PropTypes from 'prop-types';
-import { Link } from 'react-router-dom';
 
 import SimpleMenu from '~/components/menu/SimpleMenu';
 
