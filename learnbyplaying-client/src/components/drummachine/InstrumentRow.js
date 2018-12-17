@@ -23,6 +23,7 @@ const styles = theme =>
   });
 
 class InstrumentRow extends React.Component {
+  state = { steps: [1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0] };
   render() {
     const {
       typeOfInstrument,
@@ -30,7 +31,9 @@ class InstrumentRow extends React.Component {
       row,
       toggleStep,
       name,
-      classes
+      classes,
+      lastRow = false,
+      currentStep = undefined
     } = this.props;
     return (
       <React.Fragment>
@@ -48,19 +51,41 @@ class InstrumentRow extends React.Component {
           <span>{name}</span>
         </div>
         {instrumentArray.map((step, index) => (
-          <Button
-            key={typeOfInstrument + index}
-            onClick={() => toggleStep(typeOfInstrument, index)}
-            classes={{ root: classes.button }}
-            style={{
-              backgroundColor: instrumentArray[index] === 0 ? '' : '#404572',
-              gridColumn: `${index + 2}
+          <React.Fragment key={typeOfInstrument + index}>
+            <Button
+              onClick={() => toggleStep(typeOfInstrument, index)}
+              classes={{ root: classes.button }}
+              style={{
+                backgroundColor: instrumentArray[index] === 0 ? '' : '#404572',
+                gridColumn: `${index + 2}
              `,
-              gridRow: `row ${row} / span 1 `
-            }}
-          >
-            {' '}
-          </Button>
+                gridRow: `row ${row} / span 1 `
+              }}
+            >
+              {' '}
+            </Button>
+            {lastRow && (
+              <span
+                key={'steps' + index}
+                style={{
+                  color: 'floralwhite',
+                  textAlign: 'center',
+                  borderRadius: '5px',
+                  backgroundColor:
+                    currentStep % instrumentArray.length === index
+                      ? '#2AB859'
+                      : '',
+                  gridColumn: `${index + 2}
+         
+                  
+               `,
+                  gridRow: '9 / span 1 '
+                }}
+              >
+                {index + 1}
+              </span>
+            )}
+          </React.Fragment>
         ))}
       </React.Fragment>
     );
@@ -70,8 +95,10 @@ class InstrumentRow extends React.Component {
 InstrumentRow.propTypes = {
   instrumentArray: PropTypes.array,
   typeOfInstrument: PropTypes.string,
-  row: PropTypes.string,
-  toggleStep: PropTypes.func
+  row: PropTypes.number,
+  toggleStep: PropTypes.func,
+  lastRow: PropTypes.bool,
+  currentStep: PropTypes.number
 };
 
 export default withStyles(styles)(InstrumentRow);
