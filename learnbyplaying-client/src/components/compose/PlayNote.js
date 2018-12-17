@@ -11,12 +11,21 @@ class PlayNote extends Component {
   };
 
   componentDidMount() {
-    this.createInterval();
+    // this.createInterval();
   }
 
   componentWillUnmount() {
     clearInterval(this.interval);
   }
+
+  componentDidUpdate(prevProps) {
+    if(this.props.playing !== prevProps.playing) {
+      // this.setState({activeNoteSound: 0})
+          this.createInterval();
+
+    }
+  }
+
 
   createInterval = () => {
     this.index++;
@@ -30,14 +39,22 @@ class PlayNote extends Component {
     clearInterval(this.interval);
     index < composedNotes.length &&
       (this.setState({
-        activeNoteSound: composedNotes[this.index].sound
+        activeNoteSound: this.index
       }),
       index < composedNotes.length - 1 && this.createInterval());
   };
 
   render() {
     const { activeNoteSound } = this.state;
-    return <Sound url={activeNoteSound} playStatus={'PLAYING'} />;;
+    const { composedNotes = [], playing } = this.props;
+    console.log(playing)
+    return (
+      <React.Fragment>
+        {composedNotes.map((note, index) => (
+          <Sound key={note.id + index} url={note.sound} playStatus={index === activeNoteSound ? 'PLAYING' : 'STOPPED'} />
+        ))}
+      </React.Fragment>
+    );
   }
 }
 

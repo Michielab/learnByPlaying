@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 
 /* Helper function to get notes  */
 import { getNotes } from '~/components/notes/Notes';
-
 /* Import Note component  */
 import WholeNote from '~/components/notes/WholeNote';
 import QuarterNote from '~/components/notes/QuarterNote';
@@ -27,19 +26,19 @@ function basicNotes(width, height) {
       id: 'wholeNote',
       positionX: width / 2 - 80,
       positionY: height - 30,
-      duration: 2000
+      duration: 1000
     },
     {
       id: 'halfNote',
       positionX: width / 2,
       positionY: height - 30,
-      duration: 1000
+      duration: 500
     },
     {
       id: 'quarterNote',
       positionX: width / 2 + 80,
       positionY: height - 30,
-      duration: 500
+      duration: 300
     }
   ];
 }
@@ -153,8 +152,11 @@ class Compose extends Component {
             />
           );
         })}
-        {session.gameOptions.playing && !!composedNotes.length && (
-          <PlayNote composedNotes={composedNotes} />
+        {/* {composedNotes.map((note, index) => (
+          <PlayNote key={index} composedNotes={composedNotes} />
+        ))} */}
+        {!!composedNotes.length && (
+          <PlayNote composedNotes={composedNotes} playing={session.gameOptions.playing}/>
         )}
       </React.Fragment>
     );

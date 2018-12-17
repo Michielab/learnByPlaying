@@ -17,7 +17,10 @@ const styles = theme =>
     },
     link: {
       textDecoration: 'none',
-      color: '#191414'
+      color: '#191414',
+      '&:focus': {
+        outline: 'initial'
+      }
     },
     menu: {
       // width: '100px'
@@ -59,22 +62,21 @@ class SimpleMenu extends React.Component {
         >
           {/* <MenuItem onClick={this.handleClose}>Profile</MenuItem> */}
 
-          <MenuItem onClick={this.handleClose}>
             <Link to="/" className={classes.link}>
+          <MenuItem onClick={this.handleClose}>
               Home
-            </Link>
           </MenuItem>
-          <MenuItem onClick={this.handleClose}>
+            </Link>
             <Link to="/learn" className={classes.link}>
-              Learn
-            </Link>
-          </MenuItem>
           <MenuItem onClick={this.handleClose}>
-            {' '}
-            <Link to="/compose" className={classes.link}>
-              Compose
-            </Link>
+              Learn
           </MenuItem>
+            </Link>
+            <Link to="/compose" className={classes.link}>
+          <MenuItem onClick={this.handleClose}>
+              Compose
+          </MenuItem>
+            </Link>
         </Menu>
       </div>
     );

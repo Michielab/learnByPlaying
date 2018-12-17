@@ -31,17 +31,7 @@ class Nav extends Component {
     const { classes } = this.props;
     return (
       <Paper className={classes.root} square={true}>
-        {/* <IconButton
-          // className={classes.menuButton}
-          color="inherit"
-          aria-label="Menu"
-        >
-          <MenuIcon />
-        </IconButton> */}
         <SimpleMenu />
-        {/* <Link to="/learn">Home</Link>
-        <Link to="/learning">Learning</Link> */}
-        {/* <div className={classes.text}>Learning</div> */}
         <Button classes={{ root: classes.button }}>Login </Button>
       </Paper>
     );
