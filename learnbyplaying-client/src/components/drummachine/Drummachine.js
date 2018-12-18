@@ -172,20 +172,9 @@ class Drummachine extends Component {
       this.triggerSound(this.audioContext, deadline, this.snare909Buffer);
     }
 
-    if (stepsCrash[newCurrentStep % stepsCrash.length]) {
-      this.triggerSound(this.audioContext, deadline, this.crashBuffer);
-    }
+ 
     this.setState({ currentStep: newCurrentStep });
   }
-
-  toggleStep = (type, index) => {
-    let steps = this.state[type];
-    const stepValue = steps[index] === 1 ? 0 : 1;
-    steps[index] = stepValue;
-    this.setState({
-      [type]: steps
-    });
-  };
 
   handleBPMChange = e => {
     this.setState(
@@ -295,6 +284,8 @@ class Drummachine extends Component {
             row={1}
             toggleStep={this.toggleStep}
             name={'HighHat'}
+            deadline={deadline}
+
           />
           <InstrumentRow
             typeOfInstrument="stepsSnareDrum"
@@ -302,6 +293,8 @@ class Drummachine extends Component {
             row={2}
             toggleStep={this.toggleStep}
             name={'Snare'}
+            deadline={deadline}
+
           />
           <InstrumentRow
             typeOfInstrument="stepsClap"
@@ -309,6 +302,8 @@ class Drummachine extends Component {
             row={3}
             toggleStep={this.toggleStep}
             name={'Clap'}
+            deadline={deadline}
+
           />
           <InstrumentRow
             typeOfInstrument="stepsMT"
@@ -316,6 +311,8 @@ class Drummachine extends Component {
             row={4}
             toggleStep={this.toggleStep}
             name={'MT'}
+            deadline={deadline}
+
           />
           <InstrumentRow
             typeOfInstrument="snare909"
@@ -323,6 +320,8 @@ class Drummachine extends Component {
             row={5}
             toggleStep={this.toggleStep}
             name={'Snare909'}
+            deadline={deadline}
+
           />
           <InstrumentRow
             typeOfInstrument="stepsCrash"
@@ -330,6 +329,8 @@ class Drummachine extends Component {
             row={6}
             toggleStep={this.toggleStep}
             name={'Crash'}
+            deadline={deadline}
+
           />
           <InstrumentRow
             typeOfInstrument="steps"
@@ -339,6 +340,8 @@ class Drummachine extends Component {
             name={'Kick'}
             lastRow={true}
             currentStep={currentStep}
+            deadline={deadline}
+
           />
         </div>
       </div>

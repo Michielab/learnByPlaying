@@ -24,17 +24,34 @@ const styles = theme =>
 
 class InstrumentRow extends React.Component {
   state = { steps: [1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0] };
+
+  toggleStep = (index) => {
+    let steps = this.state.steps;
+    const stepValue = steps[index] === 1 ? 0 : 1;
+    steps[index] = stepValue;
+    this.setState({
+      steps
+    });
+  };
+
   render() {
     const {
       typeOfInstrument,
       instrumentArray,
       row,
-      toggleStep,
       name,
       classes,
       lastRow = false,
-      currentStep = undefined
+      currentStep,
+      triggerSound,
+      deadline
     } = this.props;
+
+    const { steps } = this.state;
+
+    if (steps[currentStep % steps.length]) {
+        triggerSound(this.audioContext, deadline, this.crashBuffer);
+      }
     return (
       <React.Fragment>
         <div
@@ -50,13 +67,13 @@ class InstrumentRow extends React.Component {
         >
           <span>{name}</span>
         </div>
-        {instrumentArray.map((step, index) => (
+        {steps.map((step, index) => (
           <React.Fragment key={typeOfInstrument + index}>
             <Button
-              onClick={() => toggleStep(typeOfInstrument, index)}
+              onClick={() => toggleStep(index)}
               classes={{ root: classes.button }}
               style={{
-                backgroundColor: instrumentArray[index] === 0 ? '' : '#404572',
+                backgroundColor: steps[index] === 0 ? '' : '#404572',
                 gridColumn: `${index + 2}
              `,
                 gridRow: `row ${row} / span 1 `
@@ -72,7 +89,7 @@ class InstrumentRow extends React.Component {
                   textAlign: 'center',
                   borderRadius: '5px',
                   backgroundColor:
-                    currentStep % instrumentArray.length === index
+                    currentStep % steps.length === index
                       ? '#2AB859'
                       : '',
                   gridColumn: `${index + 2}
