@@ -25,6 +25,13 @@ const styles = theme =>
 class InstrumentRow extends React.Component {
   state = { steps: [1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0] };
 
+  componentDidUpdate(prevProps){
+    // if(prevProps.currentStep !== this.props.currentStep)
+    //   if (steps[this.props.currentStep % steps.length]) {
+    //     triggerSound(audioContext, deadline, this.crashBuffer);
+    //   }
+  }
+
   toggleStep = (index) => {
     let steps = this.state.steps;
     const stepValue = steps[index] === 1 ? 0 : 1;
@@ -44,14 +51,14 @@ class InstrumentRow extends React.Component {
       lastRow = false,
       currentStep,
       triggerSound,
-      deadline
+      deadline,
+      toggleStep
     } = this.props;
 
     const { steps } = this.state;
 
-    if (steps[currentStep % steps.length]) {
-        triggerSound(this.audioContext, deadline, this.crashBuffer);
-      }
+    
+    console.log('render')
     return (
       <React.Fragment>
         <div
@@ -70,7 +77,7 @@ class InstrumentRow extends React.Component {
         {steps.map((step, index) => (
           <React.Fragment key={typeOfInstrument + index}>
             <Button
-              onClick={() => toggleStep(index)}
+              onClick={() => this.toggleStep(index)}
               classes={{ root: classes.button }}
               style={{
                 backgroundColor: steps[index] === 0 ? '' : '#404572',

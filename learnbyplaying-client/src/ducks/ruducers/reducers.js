@@ -2,7 +2,8 @@ import {
   SET_GAMEOPTIONS,
   TOGGLE_PLAYING,
   DEDUCT_POINTS,
-  ADD_POINTS
+  ADD_POINTS,
+  SET_AUDIO_CONTEXT
 } from '~/ducks/actions/actions';
 import { combineReducers } from 'redux';
 
@@ -44,6 +45,25 @@ const session = (state = defaultState, action) => {
       return state;
   }
 };
+
+const audioContextDefaultState = {
+  audioContext: undefined
+}
+
+const audio = (state = audioContextDefaultState, action) => {
+  switch (action.type) {
+    case SET_AUDIO_CONTEXT:
+    console.log('action.payload', action.payload.audioContext)
+      return {
+        ...state,
+        audioContext: action.payload.audioContext
+      };
+    default:
+      return state;
+  }
+};
+
 export default combineReducers({
-  session
+  session,
+  audio
 });
