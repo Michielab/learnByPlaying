@@ -7,7 +7,7 @@ import { bindActionCreators } from 'redux';
 import { setAudioContext } from '~/ducks/actions/actions';
 
 /* Import components */
-import InstrumentRow from './InstrumentRow';
+import InstrumentRow from '~/components/drummachine/instrumentRow/InstrumentRow';
 import Controls from './Controls';
 
 const mapStateToProps = state => {
@@ -56,16 +56,16 @@ class Drummachine extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      steps: [1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0],
-      stepsSnareDrum: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      stepsHighHat: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      stepsClap: [0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1],
-      stepsMT: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      snare909: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      stepsCrash: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      currentStep: 0,
+      // steps: [1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0],
+      // stepsSnareDrum: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      // stepsHighHat: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      // stepsClap: [0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1],
+      // stepsMT: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      // snare909: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      // stepsCrash: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      // currentStep: 0,
       playing: false,
-      bpm: 140
+      bpm: 130
     };
   }
 
@@ -74,9 +74,10 @@ class Drummachine extends Component {
     /* WAAClock is a library that helps scheduling things in time for the 
     WEB audio API. 
     */
-   this.props.setAudioContext(new (window.AudioContext ||
-    window.webkitAudioContext)())
-    // this.clock = new WAAClock(this.audioContext);
+    this.audioContext = new (window.AudioContext ||
+      window.webkitAudioContext)();
+
+    this.clock = new WAAClock(this.audioContext);
     // sampleLoader('./hihat.wav', this.audioContext, buffer => {
     //   this.highHatBuffer = buffer;
     // });
@@ -92,24 +93,20 @@ class Drummachine extends Component {
     // sampleLoader('./cr02.wav', this.audioContext, buffer => {
     //   this.crashBuffer = buffer;
     // });
-    console.log('hi')
+    console.log('hi');
   }
 
-  componentDidUpdate(prevProps) {
-    console.log('update', prevProps, this.props);
-    if (prevProps.audioContext !== this.props.audioContext) {
-      // this.setState({
-      //   audioContext: this.props.audioContext
-      // });
-      this.audioContext = this.props.audioContext
-    }
-  }
+  // componentDidUpdate(prevProps) {
+  //   const { audioContext } = this.props;
+  //   if (prevProps.audioContext !== audioContext) {
+  //     this.setState({ audioContext });
+  //   }
+  // }
 
   /* This method is used to start playing and schedule a event for the WEB audio API
    */
   handlePlayPress = () => {
-    const { playing } = this.state;
-    !playing ? this.startTickEvent() : this.stopTickEvent();
+    !this.state.playing && this.startTickEvent();
   };
 
   clearAll = () => {
@@ -286,6 +283,7 @@ class Drummachine extends Component {
       playing,
       steps,
       bpm,
+      audioContext,
       stepsSnareDrum,
       stepsHighHat,
       stepsClap,
@@ -295,7 +293,7 @@ class Drummachine extends Component {
     } = this.state;
     const { classes } = this.props;
 
-    console.log(this.audioContext);
+
     return (
       <div className={classes.container}>
         <div className={classes.wrapper}>
@@ -306,14 +304,15 @@ class Drummachine extends Component {
             playing={playing}
             bpm={bpm}
           />
-          <InstrumentRow
+          {/* <InstrumentRow
             typeOfInstrument="stepsHighHat"
             instrumentArray={stepsHighHat}
             row={1}
             toggleStep={this.toggleStep}
             name={'HighHat'}
             handleTick={this.handleTick}
-            currentStep={currentStep}
+            bpm={bpm}
+
             // triggerSound={)}
           />
           <InstrumentRow
@@ -331,7 +330,7 @@ class Drummachine extends Component {
             toggleStep={this.toggleStep}
             name={'Clap'}
             // currentStep={currentStep}
-          />
+          /> */}
           {/* <InstrumentRow
             typeOfInstrument="stepsMT"
             instrumentArray={stepsMT}
@@ -359,25 +358,88 @@ class Drummachine extends Component {
             // currentStep={currentStep}
 
           /> */}
-          <InstrumentRow
-            typeOfInstrument="steps"
-            instrumentArray={steps}
-            row={7}
-            toggleStep={this.toggleStep}
-            name={'Kick'}
-            lastRow={true}
-            currentStep={currentStep}
-            // currentStep={currentStep}
-          />
+
+            <React.Fragment>
+              <InstrumentRow
+                name={'Kick1'}
+                row={1}
+                // lastRow={true}
+                clock={this.clock}
+                currentStep={currentStep}
+                bpm={bpm}
+               tick={this.tickEvent}
+              />
+              <InstrumentRow
+                name={'Kick2'}
+                row={2}
+                // lastRow={true}
+                clock={this.clock}
+                currentStep={currentStep}
+                bpm={bpm}
+               tick={this.tickEvent}
+              />
+              <InstrumentRow
+                name={'Kick3'}
+                row={3}
+                // lastRow={true}
+                clock={this.clock}
+                currentStep={currentStep}
+                bpm={bpm}
+               tick={this.tickEvent}
+              />
+              <InstrumentRow
+                name={'Kick4'}
+                row={4}
+                // lastRow={true}
+                clock={this.clock}
+                currentStep={currentStep}
+                bpm={bpm}
+               tick={this.tickEvent}
+              />
+              <InstrumentRow
+                name={'Kick5'}
+                row={5}
+                // lastRow={true}
+                clock={this.clock}
+                currentStep={currentStep}
+                bpm={bpm}
+               tick={this.tickEvent}
+              />
+              <InstrumentRow
+                name={'Kick6'}
+                row={6}
+                // lastRow={true}
+                clock={this.clock}
+                currentStep={currentStep}
+                bpm={bpm}
+               tick={this.tickEvent}
+              />
+              {/* <InstrumentRow
+                name={'Kick'}
+                row={7}
+                // lastRow={true}
+                clock={this.clock}
+                currentStep={currentStep}
+                bpm={bpm}
+               tick={this.tickEvent}
+              /> */}
+              <InstrumentRow
+                name={'Kick7'}
+                clock={this.clock}
+                row={7}
+                lastRow={true}
+                currentStep={currentStep}
+                bpm={bpm}
+               tick={this.tickEvent}
+              />
+            </React.Fragment>
         </div>
       </div>
     );
   }
 }
 
-export default 
-  connect(
-    mapStateToProps,
-    mapDispatchToProps
-  )(withStyles(styles)(Drummachine))
-
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(withStyles(styles)(Drummachine));

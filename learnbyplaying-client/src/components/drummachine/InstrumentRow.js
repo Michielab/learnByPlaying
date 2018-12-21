@@ -2,6 +2,8 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles, WithStyles, createStyles, Theme } from '@material-ui/core';
 import { Button } from '@material-ui/core';
+import WAAClock from 'waaclock';
+import { triggerKick, sampleLoader } from '~/utils/Kick';
 
 const styles = theme =>
   createStyles({
@@ -12,10 +14,6 @@ const styles = theme =>
       borderRadius: '35%',
       height: '50px',
       width: '50px',
-      //   webkitBoxShadow: '4px 7px 10px 3px rgba(0,0,0,0.75)',
-      //   mozBoxShadow: '4px 7px 10px 3px rgba(0,0,0,0.75)',
-      //   boxShadow: '4px 7px 10px 3px rgba(0,0,0,0.75)',
-      //   margin: '0 10px',
       '&:hover': {
         backgroundColor: '#212121'
       }
@@ -23,16 +21,71 @@ const styles = theme =>
   });
 
 class InstrumentRow extends React.Component {
-  state = { steps: [1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0] };
+  state = {
+    steps: [1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0],
+    currentStep: 0
+  };
 
-  componentDidUpdate(prevProps){
-    // if(prevProps.currentStep !== this.props.currentStep)
-    //   if (steps[this.props.currentStep % steps.length]) {
-    //     triggerSound(audioContext, deadline, this.crashBuffer);
-    //   }
+  componentDidMount() {
+    // this.audioContext = this.props.audioContext;
+    // this.clock = this.props.clock;
+    console.log(this.clock)
   }
 
-  toggleStep = (index) => {
+  // componentDidUpdate(prevProps) {
+  //   if (prevProps.playing !== this.props.playing) {
+  //     this.startTickEvent();
+  //   }
+  // }
+
+  startTickEvent = () => {
+    const { bpm } = this.props;
+    this.setState(
+      {
+        currentStep: -1,
+        playing: true
+      },
+      () => {
+        this.clock.start();
+        this.tickEvent = this.clock
+          .callbackAtTime(
+            this.handleTick.bind(this),
+            this.audioContext.currentTime
+          )
+          .repeat(this.covertBMPtoSeconds(bpm));
+      }
+    );
+  };
+
+  covertBMPtoSeconds = bpm => {
+    return 60 / bpm / 4;
+  };
+
+
+    /* callback function that is going to be called before the sound is played */
+    handleTick({ deadline }) {
+      const {
+        currentStep,
+        steps,
+        stepsSnareDrum,
+        stepsHighHat,
+        stepsClap,
+        stepsMT,
+        snare909,
+        stepsCrash
+      } = this.state;
+      const newCurrentStep = currentStep + 1;
+  
+      console.log('handleTick');
+  
+      if (steps[newCurrentStep % steps.length]) {
+        triggerKick(this.audioContext, deadline);
+      }
+  
+      this.setState({ currentStep: newCurrentStep });
+    }
+
+  toggleStep = index => {
     let steps = this.state.steps;
     const stepValue = steps[index] === 1 ? 0 : 1;
     steps[index] = stepValue;
@@ -49,16 +102,16 @@ class InstrumentRow extends React.Component {
       name,
       classes,
       lastRow = false,
-      currentStep,
       triggerSound,
       deadline,
-      toggleStep
+      toggleStep,
+      currentStep,
+      tick
     } = this.props;
 
     const { steps } = this.state;
 
-    
-    console.log('render')
+    console.log('tick',name, tick);
     return (
       <React.Fragment>
         <div
@@ -75,7 +128,7 @@ class InstrumentRow extends React.Component {
           <span>{name}</span>
         </div>
         {steps.map((step, index) => (
-          <React.Fragment key={typeOfInstrument + index}>
+          <React.Fragment key={name + index}>
             <Button
               onClick={() => this.toggleStep(index)}
               classes={{ root: classes.button }}
@@ -96,9 +149,7 @@ class InstrumentRow extends React.Component {
                   textAlign: 'center',
                   borderRadius: '5px',
                   backgroundColor:
-                    currentStep % steps.length === index
-                      ? '#2AB859'
-                      : '',
+                    currentStep % steps.length === index ? '#2AB859' : '',
                   gridColumn: `${index + 2}
          
                   

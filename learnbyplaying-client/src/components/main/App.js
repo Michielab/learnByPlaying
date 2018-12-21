@@ -14,7 +14,7 @@ import Learn from '~/components/learn/Learn';
 import ButtonBar from '~/components/buttons/ButtonBar';
 import Score from '~/components/score/Score';
 import Compose from '~/components/compose/Compose';
-import Drummachine from '~/components/drummachine/Drummachine';
+import Drummachine from '~/components/drummachine/drummachine/DrummachineLayout';
 /* Import MaterialUI components */
 import { withStyles, createStyles, Button } from '@material-ui/core';
 import Paper from '@material-ui/core/Paper';

@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { withStyles } from '@material-ui/core';
+
+/* Imports Material-ui */
+import { withStyles, Button } from '@material-ui/core';
 import { PlayArrow, Stop, ClearAll } from '@material-ui/icons/';
-import { Button } from '@material-ui/core';
 
 const styles = theme => ({
   label: {
@@ -55,12 +56,12 @@ const styles = theme => ({
 class Controls extends Component {
   render() {
     const {
-      classes,
       handleBPMChange,
-      handlePlayPress,
-      clearAll,
+      togglePlay,
+      handleClearAll,
       playing,
-      bpm
+      bpm,
+      classes
     } = this.props;
     return (
       <React.Fragment>
@@ -74,13 +75,13 @@ class Controls extends Component {
           className={classes.BPMinput}
         />
         <Button
-          onClick={() => handlePlayPress()}
+          onClick={() => togglePlay()}
           classes={{ root: classes.playButton }}
         >
           {!playing ? <PlayArrow /> : <Stop />}
         </Button>
         <Button
-          onClick={() => clearAll()}
+          onClick={() => handleClearAll()}
           classes={{ root: classes.clearButton }}
         >
           <ClearAll />
@@ -92,8 +93,8 @@ class Controls extends Component {
 
 Controls.propTypes = {
   handleBPMChange: PropTypes.func,
-  handlePlayPress: PropTypes.func,
-  clearAll: PropTypes.func,
+  togglePlay: PropTypes.func,
+  handleClearAll: PropTypes.func,
   playing: PropTypes.bool,
   bpm: PropTypes.number
 };
