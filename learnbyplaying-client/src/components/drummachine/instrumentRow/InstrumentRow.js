@@ -17,10 +17,9 @@ const styles = theme =>
     }
   });
 
-class InstrumentRow extends Component {
+class InstrumentRow extends React.PureComponent {
     render() {
         const { row, instrumentName, classes, steps, toggleStep } = this.props;
-        console.log('insideRender', instrumentName)
         return (
             <React.Fragment>
             <div

@@ -15,6 +15,8 @@ import ButtonBar from '~/components/buttons/ButtonBar';
 import Score from '~/components/score/Score';
 import Compose from '~/components/compose/Compose';
 import Drummachine from '~/components/drummachine/drummachine/DrummachineLayout';
+import Sequencer from '~/components/drummachine/Drummachine';
+
 /* Import MaterialUI components */
 import { withStyles, createStyles, Button } from '@material-ui/core';
 import Paper from '@material-ui/core/Paper';
@@ -155,7 +157,11 @@ class App extends Component {
           <Route   path="/drummachine"
             component={({location}) => (
                     // <Scrollbars className={classes.scrollBar}>
-              <Drummachine />
+                    <React.Fragment>
+      <Drummachine />
+              <Sequencer />
+                    </React.Fragment>
+        
             )} />               
                           </Scrollbars>
         </Paper>

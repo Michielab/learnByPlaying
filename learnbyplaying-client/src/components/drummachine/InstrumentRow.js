@@ -111,7 +111,6 @@ class InstrumentRow extends React.Component {
 
     const { steps } = this.state;
 
-    console.log('tick',name, tick);
     return (
       <React.Fragment>
         <div

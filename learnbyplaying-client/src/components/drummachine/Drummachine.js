@@ -1,71 +1,31 @@
 import React, { Component } from 'react';
 import WAAClock from 'waaclock';
-import { withStyles, createStyles, Slider } from '@material-ui/core';
 import { triggerKick, sampleLoader } from '~/utils/Kick';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { setAudioContext } from '~/ducks/actions/actions';
-
-/* Import components */
-import InstrumentRow from '~/components/drummachine/instrumentRow/InstrumentRow';
-import Controls from './Controls';
+import { setCurrentStep } from '~/ducks/actions/actions';
 
 const mapStateToProps = state => {
-  console.log(state);
   return {
-    audioContext: state.audio.audioContext
+    playing: state.drummachine.drummachine.playing,
+    bpm: state.drummachine.drummachine.bpm,
+    beatSteps: state.drummachine.beatSteps,
+    currentStep: state.drummachine.drummachine.currentStep,
+    activePart: state.drummachine.activePart,
+    parts: state.drummachine.parts
   };
 };
 
 const mapDispatchToProps = dispatch => {
-  return bindActionCreators({ setAudioContext }, dispatch);
+  return bindActionCreators({ setCurrentStep }, dispatch);
 };
-
-const styles = theme =>
-  createStyles({
-    container: {
-      position: 'absolute',
-      maxWidth: '1200px',
-      borderRadius: '5px',
-      top: ' 50%',
-      left: ' 50%',
-      marginRight: '-50%',
-      transform: 'translate(-50%, -50%)',
-      width: '90%',
-      backgroundColor: '#212121',
-      padding: '20px 0',
-      WebkitBoxShadow: '32px 24px 62px -7px rgba(0,0,0,0.56)',
-      MozBoxShadow: '32px 24px 62px -7px rgba(0,0,0,0.56)',
-      boxShadow: '32px 24px 62px -7px rgba(0,0,0,0.56)',
-      padding: '20px'
-    },
-    wrapper: {
-      width: '100%',
-      margin: '0 auto',
-      display: 'grid',
-      gridTemplateColumns:
-        ' (gutter) 1fr repeat(16, (col) 4.25fr (gutter) 1fr )',
-      gridTemplateRows: 'repeat(9, (row) auto (gutter) 20px )',
-      rowGap: '5px',
-      gridGap: '5px'
-    }
-  });
 
 class Drummachine extends Component {
   audioContext;
   constructor(props) {
     super(props);
     this.state = {
-      // steps: [1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0],
-      // stepsSnareDrum: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      // stepsHighHat: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      // stepsClap: [0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1],
-      // stepsMT: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      // snare909: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      // stepsCrash: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      // currentStep: 0,
-      playing: false,
-      bpm: 130
+      currentStep: 0
     };
   }
 
@@ -78,59 +38,40 @@ class Drummachine extends Component {
       window.webkitAudioContext)();
 
     this.clock = new WAAClock(this.audioContext);
-    // sampleLoader('./hihat.wav', this.audioContext, buffer => {
-    //   this.highHatBuffer = buffer;
-    // });
-    // sampleLoader('./clap.wav', this.audioContext, buffer => {
-    //   this.clapBuffer = buffer;
-    // });
-    // sampleLoader('./mt01.wav', this.audioContext, buffer => {
-    //   this.mtBuffer = buffer;
-    // });
-    // sampleLoader('./sd03.wav', this.audioContext, buffer => {
-    //   this.snare909Buffer = buffer;
-    // });
-    // sampleLoader('./cr02.wav', this.audioContext, buffer => {
-    //   this.crashBuffer = buffer;
-    // });
+    sampleLoader('./hihat.wav', this.audioContext, buffer => {
+      this.highHatBuffer = buffer;
+    });
+    sampleLoader('./clap.wav', this.audioContext, buffer => {
+      this.clapBuffer = buffer;
+    });
+    sampleLoader('./mt01.wav', this.audioContext, buffer => {
+      this.mtBuffer = buffer;
+    });
+    sampleLoader('./sd03.wav', this.audioContext, buffer => {
+      this.snare909Buffer = buffer;
+    });
+    sampleLoader('./cr02.wav', this.audioContext, buffer => {
+      this.crashBuffer = buffer;
+    });
     console.log('hi');
   }
 
-  // componentDidUpdate(prevProps) {
-  //   const { audioContext } = this.props;
-  //   if (prevProps.audioContext !== audioContext) {
-  //     this.setState({ audioContext });
-  //   }
-  // }
+  componentDidUpdate(prevProps) {
+    const { playing, bpm } = this.props;
+    if (prevProps.playing !== playing) {
+      !playing ? this.stopTickEvent() : this.startTickEvent();
+    }
+  }
+
+  covertBMPtoSeconds = bpm => {
+    return 60 / bpm / 4;
+  };
 
   /* This method is used to start playing and schedule a event for the WEB audio API
    */
-  handlePlayPress = () => {
-    !this.state.playing && this.startTickEvent();
-  };
-
-  clearAll = () => {
-    const steps = this.state.steps.map(step => 0);
-    const stepsSnareDrum = this.state.stepsSnareDrum.map(step => 0);
-    const stepsHighHat = this.state.stepsHighHat.map(step => 0);
-    const stepsClap = this.state.stepsClap.map(step => 0);
-    const stepsMT = this.state.stepsMT.map(step => 0);
-    const snare909 = this.state.snare909.map(step => 0);
-    const stepsCrash = this.state.stepsCrash.map(step => 0);
-
-    this.setState({
-      steps,
-      stepsSnareDrum,
-      stepsHighHat,
-      stepsClap,
-      stepsMT,
-      snare909,
-      stepsCrash
-    });
-  };
 
   startTickEvent = () => {
-    const { bpm } = this.state;
+    const { bpm } = this.props;
     this.setState(
       {
         currentStep: -1,
@@ -143,7 +84,7 @@ class Drummachine extends Component {
             this.handleTick.bind(this),
             this.audioContext.currentTime
           )
-          .repeat(this.covertBMPtoSeconds(this.state.bpm));
+          .repeat(this.covertBMPtoSeconds(bpm));
       }
     );
   };
@@ -159,112 +100,273 @@ class Drummachine extends Component {
   /* callback function that is going to be called before the sound is played */
   handleTick({ deadline }) {
     const {
+      beatSteps,
       currentStep,
-      steps,
-      stepsSnareDrum,
-      stepsHighHat,
-      stepsClap,
-      stepsMT,
-      snare909,
-      stepsCrash
-    } = this.state;
+      setCurrentStep,
+      parts,
+      activePart
+    } = this.props;
     const newCurrentStep = currentStep + 1;
+    let steps = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 
-    console.log('handleTick');
+    let beats = {};
 
-    // if (steps[newCurrentStep % steps.length]) {
-    //   triggerKick(this.audioContext, deadline);
-    // }
+    let keyArray = Object.keys(beatSteps).filter(
+      element => element !== 'steps'
+    );
 
-    // if (stepsSnareDrum[newCurrentStep % stepsSnareDrum.length]) {
-    //   this.trigger(this.audioContext, deadline);
-    // }
+    keyArray.map(part =>
+      Object.keys(beatSteps[part]).map((instrument, index) => {
+        return beats.hasOwnProperty(instrument)
+          ? (beats[instrument] = beats[instrument].concat(
+              ...beatSteps[part][instrument]
+            ))
+          : (beats[instrument] = beatSteps[part][instrument]);
+      })
+    );
 
-    // if (stepsHighHat[newCurrentStep % stepsHighHat.length]) {
-    //   this.triggerSound(this.audioContext, deadline, this.highHatBuffer);
-    // }
 
-    // if (stepsClap[newCurrentStep % stepsClap.length]) {
-    //   this.triggerSound(this.audioContext, deadline, this.clapBuffer);
-    // }
+    steps =
+      Object.keys(beatSteps['partFour']).length > 1
+        ? [...steps, ...steps, ...steps, ...steps]
+        : Object.keys(beatSteps['partThree']).length > 1
+        ? [...steps, ...steps, ...steps] :Object.keys(beatSteps['partTwo']).length > 1
+        ? [...steps, ...steps ] : steps
 
-    // if (stepsMT[newCurrentStep % stepsMT.length]) {
-    //   this.triggerSound(this.audioContext, deadline, this.mtBuffer);
-    // }
+        console.log(steps)
 
-    // if (snare909[newCurrentStep % snare909.length]) {
-    //   this.triggerSound(this.audioContext, deadline, this.snare909Buffer);
-    // }
 
-    this.setState({ currentStep: newCurrentStep });
-  }
+    Object.keys(beats).map((instrument, index) => {
+      if (beats[instrument][newCurrentStep % steps.length]) {
+        console.log(beats[instrument],[newCurrentStep % steps.length] )
 
-  handleBPMChange = e => {
-    this.setState(
-      {
-        bpm: e.target.value
-      },
-      () => {
-        this.tickEvent &&
-          this.tickEvent.repeat(this.covertBMPtoSeconds(this.state.bpm));
+        const buffer = instrument + 'Buffer';
+
+        instrument === 'kick'
+          ? triggerKick(this.audioContext, deadline)
+          : this.triggerSound(this.audioContext, deadline, this[buffer]);
       }
-    );
-  };
+    });
+    // console.log(activePart)
+    //     // console.log(activePart)
+    //     keyArray.map(part =>
+    //       Object.keys(beatSteps[part])
+    //         .filter(element => element !== 'steps')
+    //         .map(
+    //           (instrument, index) =>
+    //             (beats[instrument] = keyArray.reduce((accumulator, el, index) => {
+    //               console.log(index);
+    //               return index === activePart
+    //                 ? accumulator.concat(...beatSteps[el][instrument])
+    //                 : accumulator.concat([...steps]);
+    //             }, []))
+    //         )
+    //     );
 
-  covertBMPtoSeconds = bpm => {
-    return 60 / bpm / 4;
-  };
+    //     // map over parts [partOne, partTwo, partThree, parthFour]
+    //     keyArray.map(part =>
+    //       // create arrays per part of instruments [kick, snare..etc]
+    //       Object.keys(beatSteps[part])
+    //             // filter steps out of instruments array
+    //         .filter(element => element !== 'steps')
+    //             // map over instruments [kick, snare..etc]
+    //         .map(
+    //           (instrument, index) =>
+    //           // add instrument array to beats object
+    //             (beats[instrument] ? beats[instrument].concat(...beatSteps[part][instrument]) :
+    //               keyArray.reduce((accumulator, el, index) => {
+    //               console.log(beats[instrument]);
+    //               return index === activePart
+    //                 ? accumulator.concat(...beatSteps[el][instrument])
+    //                 : accumulator.concat([...steps]);
+    //             }, []))
+    //         )
+    //     );
+    // console.log(beats['steps'][newCurrentStep % beats[instrument].length]);
+    // console.log(newCurrentStep % beats['instrument'].length);
+    // Object.keys(beatSteps)
+    //   .filter(element => element !== 'steps')
+    //   .map(part =>
+    //     Object.keys(beatSteps[part])
+    //       .filter(element => element !== 'steps')
+    //       .map((instrument, index) =>
+    //         beats[instrument]
+    //           ? (beats[instrument] =
 
-  noiseBuffer = () => {
-    var bufferSize = this.audioContext.sampleRate;
-    var buffer = this.audioContext.createBuffer(
-      1,
-      bufferSize,
-      this.audioContext.sampleRate
-    );
-    var output = buffer.getChannelData(0);
+    //             // Object.keys(beatSteps).reduce(
+    //             //   (accumulator, el, index) => {
+    //             //     return index === activePart
+    //             //       ? accumulator.concat(beatSteps[part][instrument])
+    //             //       : accumulator.concat(beatSteps[el][instrument]);
+    //             //   },
+    //             //   []
+    //             // ))
+    //             activePart === 0
+    //             ? (beats[instrument] = [
+    //               ...beatSteps[part][instrument],
+    //                 ...beatSteps[part][instrument],
+    //                 ...steps,
+    //                 ...steps
+    //               ]),
+    //           : activePart === 1
+    //           ? (beats[instrument] = [
+    //               ...steps,
+    //               ...beatSteps[part][instrument],
+    //               ...steps,
+    //               ...steps
+    //             ])
+    //           : activePart === 2
+    //           ? (beats[instrument] = [
+    //               ...steps,
+    //               ...steps,
+    //               ...beatSteps[part][instrument],
+    //               ...steps
+    //             ])
+    //           : (beats[instrument] = [
+    //               ...steps,
+    //               ...steps,
+    //               ...steps,
+    //               ...beatSteps[part][instrument]
+    //             ]),
+    //           activePart === 0
+    //           ? (beats[instrument] = [
+    //               ...beatSteps[part][instrument],
+    //               ...steps,
+    //               ...steps,
+    //               ...steps
+    //             ])
+    //           : activePart === 1
+    //           ? (beats[instrument] = [
+    //               ...steps,
+    //               ...beatSteps[part][instrument],
+    //               ...steps,
+    //               ...steps
+    //             ])
+    //           : activePart === 2
+    //           ? (beats[instrument] = [
+    //               ...steps,
+    //               ...steps,
+    //               ...beatSteps[part][instrument],
+    //               ...steps
+    //             ])
+    //           : (beats[instrument] = [
+    //               ...steps,
+    //               ...steps,
+    //               ...steps,
+    //               ...beatSteps[part][instrument]
+    //             ])
+    //       )
+    //   );
+    // Object.keys(beatSteps)
+    //   .filter(element => element !== 'steps')
+    //   .map(part =>
+    //     Object.keys(beatSteps[part])
+    //       .filter(element => element !== 'steps')
+    //       .map((instrument, index) =>
+    //         beats[instrument]
+    //           ? (beats[instrument] = beats[instrument].concat(
+    //               beatSteps[part][instrument]
+    //             ))
+    //           : index === 0
+    //           ? (beats[instrument] = [
+    //               ...beatSteps[part][instrument],
+    //               ...steps,
+    //               ...steps,
+    //               ...steps
+    //             ])
+    //           : index === 1
+    //           ? (beats[instrument] = [
+    //               ...steps,
+    //               ...beatSteps[part][instrument],
+    //               ...steps,
+    //               ...steps
+    //             ])
+    //           : index === 3
+    //           ? (beats[instrument] = [
+    //               ...steps,
+    //               ...steps,
+    //               ...beatSteps[part][instrument],
+    //               ...steps
+    //             ])
+    //           : (beats[instrument] = [
+    //               ...steps,
+    //               ...steps,
+    //               ...steps,
+    //               ...beatSteps[part][instrument]
+    //             ])
+    //       )
+    //   );
 
-    for (var i = 0; i < bufferSize; i++) {
-      output[i] = Math.random() * 2 - 1;
-    }
+    // Object.keys(beatSteps)
+    //   .filter(element => element !== 'steps')
+    //   .map(part =>
+    //     Object.keys(beatSteps[part]).map(instrument =>
+    //       beats[instrument]
+    //         ? (beats[instrument] = beats[instrument].concat(
+    //             beatSteps[part][instrument]
+    //           ))
+    //         : currentStep === 0
+    //         ? (beats[instrument] = beatSteps[part][instrument])
+    //         : currentStep === 1
+    //         ? (beats[instrument] = [...steps, ...beatSteps[part][instrument]])
+    //         : currentStep === 2
+    //         ? (beats[instrument] = [
+    //             ...steps,
+    //             ...steps,
+    //             ...beatSteps[part][instrument]
+    //           ])
+    //         : (beats[instrument] = [
+    //             ...steps,
+    //             ...steps,
+    //             ...steps,
+    //             ...beatSteps[part][instrument]
+    //           ])
+    //     )
+    //   );
+    // Object.keys(beatSteps)
+    //   .filter(element => element !== 'steps')
+    //   .map(part =>
+    //     Object.keys(beatSteps[part]).map(instrument =>
+    //       beats[instrument]
+    //         ? (beats[instrument] = beats[instrument].concat(
+    //             beatSteps[part][instrument]
+    //           ))
+    //         : (beats[instrument] = beatSteps[part][instrument])
+    //     )
+    //   );
 
-    return buffer;
-  };
+    // console.log(beats);
+    // Object.keys(beats).map((instrument, index) => {
+    //   if (beats[instrument][newCurrentStep % beats[instrument].length]) {
+    //     const buffer = instrument + 'Buffer';
 
-  setup = () => {
-    this.noise = this.audioContext.createBufferSource();
-    this.noise.buffer = this.noiseBuffer();
-    var noiseFilter = this.audioContext.createBiquadFilter();
-    noiseFilter.type = 'highpass';
-    noiseFilter.frequency.value = 1000;
-    this.noise.connect(noiseFilter);
-    this.noiseEnvelope = this.audioContext.createGain();
-    noiseFilter.connect(this.noiseEnvelope);
+    //     instrument === 'kick'
+    //       ? triggerKick(this.audioContext, deadline)
+    //       : this.triggerSound(this.audioContext, deadline, this[buffer]);
+    //   }
+    // });
 
-    this.noiseEnvelope.connect(this.audioContext.destination);
-    this.osc = this.audioContext.createOscillator();
-    this.osc.type = 'triangle';
+    // console.log(beatSteps)
+    // Object.keys(beatSteps).map((part, index) =>
+    //   // !index === 0 &&
+    //   Object.keys(beatSteps[part]).map(instrument => {
+    //     console.log('inside', beatSteps[part], instrument);
+    //     if (
+    //       beatSteps[part][instrument][
+    //         newCurrentStep % beatSteps[part][instrument].length
+    //       ]
+    //     ) {
+    //       const buffer = instrument + 'Buffer';
 
-    this.oscEnvelope = this.audioContext.createGain();
-    this.osc.connect(this.oscEnvelope);
-    this.oscEnvelope.connect(this.audioContext.destination);
-  };
+    //       instrument === 'kick'
+    //         ? triggerKick(this.audioContext, deadline)
+    //         : this.triggerSound(this.audioContext, deadline, this[buffer]);
+    //     }
+    //   })
+    // );
 
-  trigger = (context, deadline) => {
-    this.setup();
-    console.log('hi');
-    this.noiseEnvelope.gain.setValueAtTime(1, deadline);
-    this.noiseEnvelope.gain.exponentialRampToValueAtTime(0.01, deadline + 0.2);
-    this.noise.start(deadline);
-
-    this.osc.frequency.setValueAtTime(100, deadline);
-    this.oscEnvelope.gain.setValueAtTime(0.7, deadline);
-    this.oscEnvelope.gain.exponentialRampToValueAtTime(0.01, deadline + 0.1);
-    this.osc.start(deadline);
-
-    this.osc.stop(deadline + 0.2);
-    this.noise.stop(deadline + 0.2);
-  };
+    setCurrentStep(newCurrentStep);
+  }
 
   setupSound = bufferType => {
     this.source = this.audioContext.createBufferSource();
@@ -277,169 +379,63 @@ class Drummachine extends Component {
     this.source.start(deadline);
   };
 
+  // noiseBuffer = () => {
+  //   var bufferSize = this.audioContext.sampleRate;
+  //   var buffer = this.audioContext.createBuffer(
+  //     1,
+  //     bufferSize,
+  //     this.audioContext.sampleRate
+  //   );
+  //   var output = buffer.getChannelData(0);
+
+  //   for (var i = 0; i < bufferSize; i++) {
+  //     output[i] = Math.random() * 2 - 1;
+  //   }
+
+  //   return buffer;
+  // };
+
+  // setup = () => {
+  //   this.noise = this.audioContext.createBufferSource();
+  //   this.noise.buffer = this.noiseBuffer();
+  //   var noiseFilter = this.audioContext.createBiquadFilter();
+  //   noiseFilter.type = 'highpass';
+  //   noiseFilter.frequency.value = 1000;
+  //   this.noise.connect(noiseFilter);
+  //   this.noiseEnvelope = this.audioContext.createGain();
+  //   noiseFilter.connect(this.noiseEnvelope);
+
+  //   this.noiseEnvelope.connect(this.audioContext.destination);
+  //   this.osc = this.audioContext.createOscillator();
+  //   this.osc.type = 'triangle';
+
+  //   this.oscEnvelope = this.audioContext.createGain();
+  //   this.osc.connect(this.oscEnvelope);
+  //   this.oscEnvelope.connect(this.audioContext.destination);
+  // };
+
+  // trigger = (context, deadline) => {
+  //   this.setup();
+  //   console.log('hi');
+  //   this.noiseEnvelope.gain.setValueAtTime(1, deadline);
+  //   this.noiseEnvelope.gain.exponentialRampToValueAtTime(0.01, deadline + 0.2);
+  //   this.noise.start(deadline);
+
+  //   this.osc.frequency.setValueAtTime(100, deadline);
+  //   this.oscEnvelope.gain.setValueAtTime(0.7, deadline);
+  //   this.oscEnvelope.gain.exponentialRampToValueAtTime(0.01, deadline + 0.1);
+  //   this.osc.start(deadline);
+
+  //   this.osc.stop(deadline + 0.2);
+  //   this.noise.stop(deadline + 0.2);
+  // };
+
   render() {
-    const {
-      currentStep,
-      playing,
-      steps,
-      bpm,
-      audioContext,
-      stepsSnareDrum,
-      stepsHighHat,
-      stepsClap,
-      stepsMT,
-      snare909,
-      stepsCrash
-    } = this.state;
-    const { classes } = this.props;
-
-
-    return (
-      <div className={classes.container}>
-        <div className={classes.wrapper}>
-          <Controls
-            handleBPMChange={this.handleBPMChange}
-            handlePlayPress={this.handlePlayPress}
-            clearAll={this.clearAll}
-            playing={playing}
-            bpm={bpm}
-          />
-          {/* <InstrumentRow
-            typeOfInstrument="stepsHighHat"
-            instrumentArray={stepsHighHat}
-            row={1}
-            toggleStep={this.toggleStep}
-            name={'HighHat'}
-            handleTick={this.handleTick}
-            bpm={bpm}
-
-            // triggerSound={)}
-          />
-          <InstrumentRow
-            typeOfInstrument="stepsSnareDrum"
-            instrumentArray={stepsSnareDrum}
-            row={2}
-            toggleStep={this.toggleStep}
-            name={'Snare'}
-            // currentStep={currentStep}
-          />
-          <InstrumentRow
-            typeOfInstrument="stepsClap"
-            instrumentArray={stepsClap}
-            row={3}
-            toggleStep={this.toggleStep}
-            name={'Clap'}
-            // currentStep={currentStep}
-          /> */}
-          {/* <InstrumentRow
-            typeOfInstrument="stepsMT"
-            instrumentArray={stepsMT}
-            row={4}
-            toggleStep={this.toggleStep}
-            name={'MT'}
-            // currentStep={currentStep}
-
-          />
-          <InstrumentRow
-            typeOfInstrument="snare909"
-            instrumentArray={snare909}
-            row={5}
-            toggleStep={this.toggleStep}
-            name={'Snare909'}
-            // currentStep={currentStep}
-
-          />
-          <InstrumentRow
-            typeOfInstrument="stepsCrash"
-            instrumentArray={stepsCrash}
-            row={6}
-            toggleStep={this.toggleStep}
-            name={'Crash'}
-            // currentStep={currentStep}
-
-          /> */}
-
-            <React.Fragment>
-              <InstrumentRow
-                name={'Kick1'}
-                row={1}
-                // lastRow={true}
-                clock={this.clock}
-                currentStep={currentStep}
-                bpm={bpm}
-               tick={this.tickEvent}
-              />
-              <InstrumentRow
-                name={'Kick2'}
-                row={2}
-                // lastRow={true}
-                clock={this.clock}
-                currentStep={currentStep}
-                bpm={bpm}
-               tick={this.tickEvent}
-              />
-              <InstrumentRow
-                name={'Kick3'}
-                row={3}
-                // lastRow={true}
-                clock={this.clock}
-                currentStep={currentStep}
-                bpm={bpm}
-               tick={this.tickEvent}
-              />
-              <InstrumentRow
-                name={'Kick4'}
-                row={4}
-                // lastRow={true}
-                clock={this.clock}
-                currentStep={currentStep}
-                bpm={bpm}
-               tick={this.tickEvent}
-              />
-              <InstrumentRow
-                name={'Kick5'}
-                row={5}
-                // lastRow={true}
-                clock={this.clock}
-                currentStep={currentStep}
-                bpm={bpm}
-               tick={this.tickEvent}
-              />
-              <InstrumentRow
-                name={'Kick6'}
-                row={6}
-                // lastRow={true}
-                clock={this.clock}
-                currentStep={currentStep}
-                bpm={bpm}
-               tick={this.tickEvent}
-              />
-              {/* <InstrumentRow
-                name={'Kick'}
-                row={7}
-                // lastRow={true}
-                clock={this.clock}
-                currentStep={currentStep}
-                bpm={bpm}
-               tick={this.tickEvent}
-              /> */}
-              <InstrumentRow
-                name={'Kick7'}
-                clock={this.clock}
-                row={7}
-                lastRow={true}
-                currentStep={currentStep}
-                bpm={bpm}
-               tick={this.tickEvent}
-              />
-            </React.Fragment>
-        </div>
-      </div>
-    );
+    return <div />;
   }
 }
 
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(withStyles(styles)(Drummachine));
+)(Drummachine);

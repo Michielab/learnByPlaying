@@ -7,13 +7,19 @@ import { toggleStep } from '~/ducks/actions/actions';
 import InstrumentRow from './InstrumentRow';
 
 const mapStateToProps = (state, ownProps) => {
-  console.log(state.drummachine.beatSteps.hasOwnProperty(instrumentName));
+  const part = state.drummachine.parts[state.drummachine.activePart];
   const instrumentName = ownProps.instrumentName;
-  const stepArray = state.drummachine.beatSteps.hasOwnProperty(instrumentName)
-    ? [...state.drummachine.beatSteps[instrumentName]]
+  const stepArray = state.drummachine.beatSteps[part].hasOwnProperty(
+    instrumentName
+  )
+    ? [...state.drummachine.beatSteps[part][instrumentName]]
     : [...state.drummachine.beatSteps.steps];
   return {
-    steps: stepArray
+    steps: stepArray,
+    parts: state.drummachine.parts,
+    part,
+    beatSteps: state.drummachine.beatSteps,
+    activePart: state.drummachine.activePart
   };
 };
 
@@ -21,22 +27,58 @@ const mapDispatchToProps = dispatch => {
   return bindActionCreators({ toggleStep }, dispatch);
 };
 
-class InstrumentRowSmart extends React.Component {
+class InstrumentRowSmart extends React.PureComponent {
   toggleStep = index => {
+    const { part, beatSteps, parts, activePart, instrumentName } = this.props;
+
+    let newSteps = beatSteps;
+
+    if (
+      (!newSteps[parts[0]].hasOwnProperty(instrumentName) &&
+        activePart === 1) ||
+      (!newSteps[parts[0]].hasOwnProperty(instrumentName) &&
+        activePart === 2) ||
+      (!newSteps[parts[0]].hasOwnProperty(instrumentName) && activePart === 3)
+    ) {
+      newSteps[parts[0]][instrumentName] = beatSteps[parts[0]].steps;
+    }
+
+    if (
+      (!beatSteps[parts[1]].hasOwnProperty(instrumentName) &&
+        activePart === 3) ||
+      (!beatSteps[parts[1]].hasOwnProperty(instrumentName) && activePart === 2)
+    ) {
+      newSteps[parts[1]][instrumentName] = beatSteps[parts[1]].steps;
+    }
+
+    if (
+      !beatSteps[parts[2]].hasOwnProperty(instrumentName) &&
+      activePart === 3
+    ) {
+      newSteps[parts[2]][instrumentName] = beatSteps[parts[2]].steps;
+    }
+
     let steps = this.props.steps;
     const stepValue = steps[index] === 1 ? 0 : 1;
     steps[index] = stepValue;
-    this.props.toggleStep({ instrumentName: this.props.instrumentName, steps });
+
+    newSteps[part][instrumentName] = steps;
+
+    console.log(newSteps)
+    this.props.toggleStep(newSteps);
   };
 
   render() {
-    const { row, instrumentName, classes, steps } = this.props;
+    const { row, instrumentName, part, steps, parts } = this.props;
+    console.log('part', part)
     return (
       <InstrumentRow
         instrumentName={instrumentName}
         row={row}
         steps={steps}
         toggleStep={this.toggleStep}
+        parts={parts}
+        part={part}
       />
     );
   }

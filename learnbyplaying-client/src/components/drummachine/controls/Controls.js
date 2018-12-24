@@ -39,6 +39,15 @@ const styles = theme => ({
     width: '30px',
     padding: 0
   },
+  selectPartButton: {
+    gridRow: 0,
+    border: 'solid 2px',
+    height: '35px',
+    marginBottom: '30px',
+    borderRadius: '20%',
+    width: '30px',
+    padding: 0
+  },
   clearButton: {
     gridColumn: 17,
     gridRow: 0,
@@ -61,7 +70,10 @@ class Controls extends Component {
       handleClearAll,
       playing,
       bpm,
-      classes
+      classes,
+      selectPart,
+      parts,
+      activePart
     } = this.props;
     return (
       <React.Fragment>
@@ -74,6 +86,21 @@ class Controls extends Component {
           onChange={handleBPMChange}
           className={classes.BPMinput}
         />
+        {parts.map((part, index) => (
+          <Button
+            onClick={() => selectPart(index)}
+            classes={{ root: classes.selectPartButton }}
+            style={{
+              gridColumn: 7 + index,
+              color:
+                activePart === index ? '#a34747' : 'rgba(255, 255, 255, 0.8)',
+              borderColor:
+                activePart === index ? '#a34747' : 'rgba(255, 255, 255, 0.8)'
+            }}
+          >
+            {'Part' + (index + 1)}
+          </Button>
+        ))}
         <Button
           onClick={() => togglePlay()}
           classes={{ root: classes.playButton }}

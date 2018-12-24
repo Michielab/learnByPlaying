@@ -1,11 +1,10 @@
 import React, { Component } from 'react';
 import { withStyles, createStyles } from '@material-ui/core';
 
-
 /* Import components */
 import InstrumentRowSmart from '~/components/drummachine/instrumentRow/InstrumentRowSmart';
-import Controls from '~/components/drummachine/controls/Controls';
-
+import ControlsSmart from '~/components/drummachine/controls/ControlsSmart';
+import StepsIndicatorSmart from '~/components/drummachine/stepsIndicator/StepsIndicatorSmart';
 const styles = theme =>
   createStyles({
     container: {
@@ -43,15 +42,16 @@ class DrumMachineLayout extends Component {
     return (
       <div className={classes.container}>
         <div className={classes.wrapper}>
-          <Controls
-            // handleBPMChange={this.handleBPMChange}
-            // handlePlayPress={this.handlePlayPress}
-            // clearAll={this.clearAll}
-            // playing={playing}
-            // bpm={bpm}
-          />
-         <InstrumentRowSmart instrumentName="kick" row={1} />
-         <InstrumentRowSmart instrumentName="snare" row={2} />
+          <ControlsSmart />
+          <InstrumentRowSmart instrumentName="kick" row={1} />
+          <InstrumentRowSmart instrumentName="highHat" row={2} />
+          <InstrumentRowSmart instrumentName="mt" row={3} />
+          <InstrumentRowSmart instrumentName="snare909" row={4} />
+          <InstrumentRowSmart instrumentName="clap" row={5} />
+          <InstrumentRowSmart instrumentName="crash" row={6} />
+
+
+          <StepsIndicatorSmart />
         </div>
       </div>
     );

@@ -1,53 +1,66 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
-/* Imports Material-ui */
-import { withStyles } from '@material-ui/core';
-import { PlayArrow, Stop, ClearAll } from '@material-ui/icons/';
-import { Button } from '@material-ui/core';
-
 /* Imports Redux */
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import {
   togglePlay,
   handleBPMChange,
-  handleClearAll
+  handleClearAll as handleClearAllAction,
+  selectPart
 } from '~/ducks/actions/actions';
 
 /* Imports components */
 import Controls from '~/components/drummachine/controls/Controls';
 
-const mapStateToProps = (state, ownProps) => {
+const mapStateToProps = (state) => {
   return {
-    bpm: state.drummachine.bpm,
-    playing: state.drummachine.playing
+    bpm: state.drummachine.drummachine.bpm,
+    playing: state.drummachine.drummachine.playing,
+    beatSteps: state.drummachine.beatSteps,
+    parts: state.drummachine.parts,
+    activePart: state.drummachine.activePart
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return bindActionCreators(
-    { togglePlay, handleBPMChange, handleClearAll },
+    { togglePlay, handleBPMChange, handleClearAllAction, selectPart },
     dispatch
   );
 };
 
 class ControlsSmart extends Component {
+  /* method to clear all the steps */
+  handleClearAll = () => {
+    let { beatSteps } = this.props;
+
+    if (Object.keys(beatSteps).length === 1) {
+      return null;
+    }
+
+    Object.keys(beatSteps).map(
+      instrument =>
+        (beatSteps[instrument] = beatSteps[instrument].map(step => 0))
+    );
+
+    this.props.handleClearAllAction(beatSteps);
+  };
+
   render() {
-    const {
-      handleBPMChange,
-      togglePlay,
-      handleClearAll,
-      playing,
-      bpm
-    } = this.props;
+    const { handleBPMChange, togglePlay, playing, bpm, selectPart, parts, activePart } = this.props;
+
     return (
       <Controls
         togglePlay={togglePlay}
         handleBPMChange={handleBPMChange}
-        handleClearAll={handleClearAll}
+        handleClearAll={this.handleClearAll}
         playing={playing}
         bpm={bpm}
+        selectPart={selectPart}
+        parts={parts}
+        activePart={activePart}
       />
     );
   }
