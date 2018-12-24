@@ -97,7 +97,7 @@ let currentPart = 0;
               textAlign: 'center',
               borderRadius: '5px',
               backgroundColor:
-                currentStep % steps.length === index ? '#2AB859' : '',
+              currentStep % steps.length === index ? '#2AB859' : '',
               gridColumn: `${index + 2 - (16 * currentPart)}
          
                   

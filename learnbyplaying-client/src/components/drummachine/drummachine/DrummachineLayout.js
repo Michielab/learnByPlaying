@@ -50,8 +50,8 @@ class DrumMachineLayout extends Component {
           <InstrumentRowSmart instrumentName="clap" row={5} />
           <InstrumentRowSmart instrumentName="crash" row={6} />
 
-
-          <StepsIndicatorSmart />
+{/* 
+          <StepsIndicatorSmart /> */}
         </div>
       </div>
     );

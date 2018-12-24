@@ -88,6 +88,7 @@ class Controls extends Component {
         />
         {parts.map((part, index) => (
           <Button
+            key={index}
             onClick={() => selectPart(index)}
             classes={{ root: classes.selectPartButton }}
             style={{
