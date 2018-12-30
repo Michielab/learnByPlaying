@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { toggleStep } from '~/ducks/actions/actions';
+import { toggleStep, handleAmplitudeChange, toggleMute } from '~/ducks/actions/actions';
 
 import InstrumentRow from './InstrumentRow';
 
@@ -14,17 +14,23 @@ const mapStateToProps = (state, ownProps) => {
   )
     ? [...state.drummachine.beatSteps[part][instrumentName]]
     : [...state.drummachine.beatSteps.steps];
+
+  const mainGain = state.drummachine.amplitude.hasOwnProperty(instrumentName)
+    ? state.drummachine.amplitude[instrumentName]
+    : state.drummachine.amplitude.mainGain;
   return {
     steps: stepArray,
     parts: state.drummachine.parts,
     part,
     beatSteps: state.drummachine.beatSteps,
-    activePart: state.drummachine.activePart
+    activePart: state.drummachine.activePart,
+    mainGain,
+    amplitude: state.drummachine.amplitude
   };
 };
 
 const mapDispatchToProps = dispatch => {
-  return bindActionCreators({ toggleStep }, dispatch);
+  return bindActionCreators({ toggleStep, handleAmplitudeChange, toggleMute }, dispatch);
 };
 
 class InstrumentRowSmart extends React.PureComponent {
@@ -64,13 +70,22 @@ class InstrumentRowSmart extends React.PureComponent {
 
     newSteps[part][instrumentName] = steps;
 
-    console.log(newSteps)
     this.props.toggleStep(newSteps);
   };
 
+  changeAmplitude = (instrumentName, amplitudeValue) => {
+    const {handleAmplitudeChange} = this.props;
+    handleAmplitudeChange(instrumentName,amplitudeValue)
+  }
+
+  handleToggleMute = (instrumentName) => {
+    const {toggleMute} = this.props;
+    toggleMute(instrumentName)
+  }
+
+
   render() {
-    const { row, instrumentName, part, steps, parts } = this.props;
-    console.log('part', part)
+    const { row, instrumentName, part, steps, parts, mainGain, amplitude } = this.props;
     return (
       <InstrumentRow
         instrumentName={instrumentName}
@@ -79,6 +94,10 @@ class InstrumentRowSmart extends React.PureComponent {
         toggleStep={this.toggleStep}
         parts={parts}
         part={part}
+        mainGain={mainGain}
+        changeAmplitude={this.changeAmplitude}
+        toggleMute={this.handleToggleMute}
+        amplitude={amplitude}
       />
     );
   }

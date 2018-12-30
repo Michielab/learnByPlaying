@@ -1,12 +1,12 @@
-export const triggerKick = (context, deadline) => {
+export const triggerKick = (context, deadline, gainMax, analyser) => {
   /* 
     Create Oscillator is a method the audio context. 
     A Oscillator is a switch that creates periodic waves. 
     */
   const oscillator = context.createOscillator();
   oscillator.frequency.setValueAtTime(200, deadline);
+  
   oscillator.start(deadline);
-
   /* 
     Create gain is a way to create a gain node, which in return allows us 
     to control the amplitude of our oscillator over time. Amplitude is the 
@@ -21,13 +21,12 @@ export const triggerKick = (context, deadline) => {
     Connect our oscillator to the gain node we created
     */
   oscillator.connect(amplifier);
-
   /* 
     SetvalueAtTime is used to set the value of the gain at a certain moment.
     The first parameter is the value you want to set and the second parameter is the time 
     on which you want te set the parameter.
     */
-  amplifier.gain.setValueAtTime(1, deadline);
+  amplifier.gain.setValueAtTime(gainMax, deadline);
   oscillator.frequency.exponentialRampToValueAtTime(50, deadline + 0.15);
 
   /* 
@@ -48,11 +47,11 @@ export const triggerKick = (context, deadline) => {
 Exponential ramps are considered more useful when changing frequencies or playback rates than linear ramps because of the way the human ear works.
     */
   // amplifier.gain.exponentialRampToValueAtTime(0.001, deadline + 0.02);
-
   amplifier.gain.exponentialRampToValueAtTime(0.01, deadline + 0.5);
-
+  amplifier.connect(analyser)
   /*  The last step is to connect the amplifier to the contect desitation aka sound device */
-  amplifier.connect(context.destination);
+  analyser.connect(context.destination);
+
 };
 
 export const sampleLoader = (url, context, callback) => {

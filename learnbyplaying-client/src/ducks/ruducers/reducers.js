@@ -9,7 +9,9 @@ import {
   HANDLE_BPM_CHANGE,
   HANLE_CLEAR_ALL,
   SET_CURRENT_STEP,
-  SELECT_PART
+  SELECT_PART,
+  AMPLITUDE_CHANGE,
+  MUTE_INSTRUMENT
 } from '~/ducks/actions/actions';
 import { combineReducers } from 'redux';
 import { HANDLE_CLEAR_ALL } from '../actions/actions';
@@ -66,8 +68,12 @@ const audioContextDefaultState = {
     partThree: { steps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
     partFour: { steps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] }
   },
+  amplitude: {
+    mainGain: 100,
+  },
   parts: ['partOne', 'partTwo', 'partThree', 'partFour'],
-  activePart: 0
+  activePart: 0,
+  selectedParts: ['partOne']
 };
 
 const drummachine = (state = audioContextDefaultState, action) => {
@@ -124,10 +130,27 @@ const drummachine = (state = audioContextDefaultState, action) => {
         }
       };
     case SELECT_PART:
-    console.log('partInReducer', action.payload.activePart)
       return {
         ...state,
-        activePart: action.payload.activePart
+        activePart: action.payload.activePart,
+        selectedParts: [...action.payload.selectedParts]
+      };
+    case AMPLITUDE_CHANGE:
+      return {
+        ...state,
+        amplitude: {
+          ...state.amplitude,
+          [action.payload.instrument]: action.payload.amplitude
+        }
+      };
+    case MUTE_INSTRUMENT:
+      let mute = state.amplitude[action.payload.instrument + 'Mute'] ? false : true;
+      return {
+        ...state,
+        amplitude: {
+          ...state.amplitude,
+          [action.payload.instrument + 'Mute']: mute
+        }
       };
     default:
       return state;

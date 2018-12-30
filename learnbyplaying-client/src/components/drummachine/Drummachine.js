@@ -4,6 +4,7 @@ import { triggerKick, sampleLoader } from '~/utils/Kick';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { setCurrentStep } from '~/ducks/actions/actions';
+import AudioCtxContext from './audioContext/AudioContext';
 
 const mapStateToProps = state => {
   return {
@@ -12,7 +13,9 @@ const mapStateToProps = state => {
     beatSteps: state.drummachine.beatSteps,
     currentStep: state.drummachine.drummachine.currentStep,
     activePart: state.drummachine.activePart,
-    parts: state.drummachine.parts
+    parts: state.drummachine.parts,
+    selectedParts: state.drummachine.selectedParts,
+    amplitude: state.drummachine.amplitude
   };
 };
 
@@ -36,6 +39,12 @@ class Drummachine extends Component {
     */
     this.audioContext = new (window.AudioContext ||
       window.webkitAudioContext)();
+    this.analyser = this.audioContext.createAnalyser();
+    this.analyser.fftSize = 2048;
+    this.bufferLength = this.analyser.frequencyBinCount;
+    this.dataArray = new Uint8Array(this.bufferLength);
+
+    //;
 
     this.clock = new WAAClock(this.audioContext);
     sampleLoader('./hihat.wav', this.audioContext, buffer => {
@@ -48,12 +57,17 @@ class Drummachine extends Component {
       this.mtBuffer = buffer;
     });
     sampleLoader('./sd03.wav', this.audioContext, buffer => {
-      this.snare909Buffer = buffer;
+      this.snareBuffer = buffer;
     });
     sampleLoader('./cr02.wav', this.audioContext, buffer => {
       this.crashBuffer = buffer;
     });
-    console.log('hi');
+    console.log('hi', this.audioContext.currentTime);
+    this.draw();
+  }
+
+  componentWillUnmount() {
+    clearTimeout(this.timeOut);
   }
 
   componentDidUpdate(prevProps) {
@@ -72,10 +86,18 @@ class Drummachine extends Component {
 
   startTickEvent = () => {
     const { bpm } = this.props;
+    console.log(
+      'bmp',
+      bpm,
+      'clock',
+      this.clock,
+      this.covertBMPtoSeconds(bpm),
+      this.audioContext
+    );
+
     this.setState(
       {
-        currentStep: -1,
-        playing: true
+        currentStep: -1
       },
       () => {
         this.clock.start();
@@ -90,7 +112,7 @@ class Drummachine extends Component {
   };
 
   stopTickEvent = () => {
-    this.setState({ playing: false }, () => {
+    this.setState(() => {
       this.clock.stop();
       this.tickEvent.clear();
       this.tickEvent = null;
@@ -103,8 +125,8 @@ class Drummachine extends Component {
       beatSteps,
       currentStep,
       setCurrentStep,
-      parts,
-      activePart
+      selectedParts,
+      amplitude
     } = this.props;
     const newCurrentStep = currentStep + 1;
     let steps = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
@@ -114,8 +136,6 @@ class Drummachine extends Component {
     let keyArray = Object.keys(beatSteps).filter(
       element => element !== 'steps'
     );
-
-console.log('beats', beats, 'currentStep', currentStep)
 
     keyArray.map(part =>
       Object.keys(beatSteps[part]).map((instrument, index) => {
@@ -127,41 +147,98 @@ console.log('beats', beats, 'currentStep', currentStep)
       })
     );
 
-
     steps =
-      Object.keys(beatSteps['partFour']).length > 1
+      selectedParts.indexOf('partFour') !== -1
         ? [...steps, ...steps, ...steps, ...steps]
-        : Object.keys(beatSteps['partThree']).length > 1
-        ? [...steps, ...steps, ...steps] :Object.keys(beatSteps['partTwo']).length > 1
-        ? [...steps, ...steps ] : steps
-
-        console.log('steps', steps)
-
+        : selectedParts.indexOf('partThree') !== -1
+        ? [...steps, ...steps, ...steps]
+        : selectedParts.indexOf('partTwo') !== -1
+        ? [...steps, ...steps]
+        : steps;
 
     Object.keys(beats).map((instrument, index) => {
       if (beats[instrument][newCurrentStep % steps.length]) {
-        console.log(beats[instrument],[newCurrentStep % steps.length] )
-
         const buffer = instrument + 'Buffer';
 
+        const amplitudeValue = amplitude.hasOwnProperty(instrument)
+          ? amplitude[instrument]
+          : amplitude.mainGain;
+
+        let gainValue = amplitude.hasOwnProperty(instrument + 'Mute')
+          ? amplitude[instrument + 'Mute']
+            ? 0
+            : amplitudeValue / 100
+          : amplitudeValue / 100;
+
         instrument === 'kick'
-          ? triggerKick(this.audioContext, deadline)
-          : this.triggerSound(this.audioContext, deadline, this[buffer]);
+          ? triggerKick(this.audioContext, deadline, gainValue, this.analyser)
+          : this.triggerSound(
+              this.audioContext,
+              deadline,
+              this[buffer],
+              gainValue
+            );
       }
     });
 
     setCurrentStep(newCurrentStep);
   }
 
-  setupSound = bufferType => {
+  setupSound = (bufferType, gainValue) => {
     this.source = this.audioContext.createBufferSource();
     this.source.buffer = bufferType;
-    this.source.connect(this.audioContext.destination);
+    this.gain = this.audioContext.createGain();
+    this.source.connect(this.gain);
+    this.gain.connect(this.analyser);
+    this.gain.gain.value = gainValue;
+    this.gain.connect(this.audioContext.destination);
   };
 
-  triggerSound = (context, deadline, bufferType) => {
-    this.setupSound(bufferType);
+  triggerSound = (context, deadline, bufferType, gainValue) => {
+    this.setupSound(bufferType, gainValue);
+
     this.source.start(deadline);
+    // this.gain.gain.setValueAtTime(gainValue, deadline);
+  };
+
+  canvasRef = canvas => {
+    this.canvas = canvas;
+    this.myCanvas = this.canvas.getContext('2d');
+  };
+
+  draw = () => {
+    this.animationFrame = requestAnimationFrame(this.draw);
+    this.analyser.getByteTimeDomainData(this.dataArray);
+    this.myCanvas.fillStyle = '#333333';
+    // method to fill the rectangle.
+    this.myCanvas.fillRect(
+      0,
+      0,
+      this.canvas.offsetWidth,
+      this.canvas.offsetHeight
+    );
+    this.myCanvas.lineWidth = 2;
+    this.myCanvas.strokeStyle = 'rgb(40, 95, 95)';
+    // this.myCanvas.strokeStyle = 'rgb(121, 134, 203)';
+
+    this.myCanvas.beginPath();
+    var sliceWidth = (this.canvas.offsetWidth * 1.0) / this.bufferLength;
+    var x = 0;
+
+    for (var i = 0; i < this.bufferLength; i++) {
+      var v = this.dataArray[i] / 128.0;
+      var y = (v * this.canvas.offsetHeight) / 2;
+      if (i === 0) {
+        this.myCanvas.moveTo(x, y);
+      } else {
+        this.myCanvas.lineTo(x, y);
+      }
+
+      x += sliceWidth;
+    }
+
+    this.myCanvas.lineTo(this.canvas.offsetWidth, this.canvas.offsetHeight / 2);
+    this.myCanvas.stroke();
   };
 
   // noiseBuffer = () => {
@@ -216,11 +293,29 @@ console.log('beats', beats, 'currentStep', currentStep)
   // };
 
   render() {
-    return <div />;
+    return (
+      <canvas
+        ref={this.canvasRef}
+        className="visualizer"
+        style={{
+          gridArea: '1 / 7 / 3 / 13',
+          width: '100%',
+          // backgroundColor: 'white',
+          // marginBottom: '10px',
+          height: '150px'
+        }}
+      />
+    );
   }
 }
 
-export default connect(
+const ConnectedDrummachine = connect(
   mapStateToProps,
   mapDispatchToProps
 )(Drummachine);
+
+export default () => (
+  <AudioCtxContext.Consumer>
+    {childProps => <ConnectedDrummachine {...childProps} />}
+  </AudioCtxContext.Consumer>
+);

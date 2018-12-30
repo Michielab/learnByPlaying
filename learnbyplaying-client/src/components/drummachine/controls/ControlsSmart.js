@@ -14,13 +14,16 @@ import {
 /* Imports components */
 import Controls from '~/components/drummachine/controls/Controls';
 
-const mapStateToProps = (state) => {
+const mapStateToProps = state => {
   return {
     bpm: state.drummachine.drummachine.bpm,
     playing: state.drummachine.drummachine.playing,
     beatSteps: state.drummachine.beatSteps,
     parts: state.drummachine.parts,
-    activePart: state.drummachine.activePart
+    activePart: state.drummachine.activePart,
+    selectedParts: state.drummachine.selectedParts,
+    steps: state.drummachine.beatSteps.steps,
+    currentStep: state.drummachine.drummachine.currentStep
   };
 };
 
@@ -36,20 +39,50 @@ class ControlsSmart extends Component {
   handleClearAll = () => {
     let { beatSteps } = this.props;
 
-    if (Object.keys(beatSteps).length === 1) {
-      return null;
-    }
+    // if (Object.keys(beatSteps).length === 1) {
+    //   return null;
+    // }
+    // console.log(beatSteps)
 
-    Object.keys(beatSteps).map(
-      instrument =>
-        (beatSteps[instrument] = beatSteps[instrument].map(step => 0))
+    Object.keys(beatSteps).filter(el => el !== 'steps').map(part =>
+      Object.keys(beatSteps[part]).map(
+        instrument =>
+          (beatSteps[part][instrument] = beatSteps[part][instrument].map(step => 0))
+      )
     );
-
+    // console.log(
+    //   Object.keys(beatSteps).filter(el => el !== 'steps').map(part => Object))
     this.props.handleClearAllAction(beatSteps);
   };
 
+  toggleParts = index => {
+    const { selectPart, selectedParts, parts, activePart } = this.props;
+    let newSelectedParts = selectedParts;
+
+    selectedParts.indexOf(parts[index]) !== -1 &&
+    parts[activePart] === parts[index]
+      ? (newSelectedParts = newSelectedParts.filter(
+          part => part !== parts[index]
+        ))
+      : selectedParts.indexOf(parts[index]) !== -1
+      ? ''
+      : newSelectedParts.push(parts[index]);
+
+    selectPart(index, newSelectedParts);
+  };
+
   render() {
-    const { handleBPMChange, togglePlay, playing, bpm, selectPart, parts, activePart } = this.props;
+    const {
+      handleBPMChange,
+      togglePlay,
+      playing,
+      bpm,
+      parts,
+      activePart,
+      selectedParts,
+      currentStep,
+      steps
+    } = this.props;
 
     return (
       <Controls
@@ -58,9 +91,12 @@ class ControlsSmart extends Component {
         handleClearAll={this.handleClearAll}
         playing={playing}
         bpm={bpm}
-        selectPart={selectPart}
+        toggleParts={this.toggleParts}
         parts={parts}
         activePart={activePart}
+        selectedParts={selectedParts}
+        currentStep={currentStep}
+        steps={steps}
       />
     );
   }

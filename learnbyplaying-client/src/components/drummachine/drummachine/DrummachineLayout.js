@@ -5,13 +5,15 @@ import { withStyles, createStyles } from '@material-ui/core';
 import InstrumentRowSmart from '~/components/drummachine/instrumentRow/InstrumentRowSmart';
 import ControlsSmart from '~/components/drummachine/controls/ControlsSmart';
 import StepsIndicatorSmart from '~/components/drummachine/stepsIndicator/StepsIndicatorSmart';
+import Visualizer from '~/components/drummachine/visualizer/Visualizer';
+
 const styles = theme =>
   createStyles({
     container: {
       position: 'absolute',
       maxWidth: '1200px',
       borderRadius: '5px',
-      top: ' 50%',
+      top: ' 60%',
       left: ' 50%',
       marginRight: '-50%',
       transform: 'translate(-50%, -50%)',
@@ -29,7 +31,7 @@ const styles = theme =>
       display: 'grid',
       gridTemplateColumns:
         ' (gutter) 1fr repeat(16, (col) 4.25fr (gutter) 1fr )',
-      gridTemplateRows: 'repeat(9, (row) auto (gutter) 20px )',
+      gridTemplateRows: 'repeat(13, (row) auto (gutter) 20px )',
       rowGap: '5px',
       gridGap: '5px'
     }
@@ -43,15 +45,13 @@ class DrumMachineLayout extends Component {
       <div className={classes.container}>
         <div className={classes.wrapper}>
           <ControlsSmart />
-          <InstrumentRowSmart instrumentName="kick" row={1} />
-          <InstrumentRowSmart instrumentName="highHat" row={2} />
-          <InstrumentRowSmart instrumentName="mt" row={3} />
-          <InstrumentRowSmart instrumentName="snare909" row={4} />
-          <InstrumentRowSmart instrumentName="clap" row={5} />
-          <InstrumentRowSmart instrumentName="crash" row={6} />
-
-{/* 
-          <StepsIndicatorSmart /> */}
+          <InstrumentRowSmart instrumentName="crash" row={4} />
+          <InstrumentRowSmart instrumentName="highHat" row={5} />
+          <InstrumentRowSmart instrumentName="mt" row={6} />
+          <InstrumentRowSmart instrumentName="snare" row={7} />
+          <InstrumentRowSmart instrumentName="clap" row={8} />
+          <InstrumentRowSmart instrumentName="kick" row={9} />
+          <StepsIndicatorSmart />
         </div>
       </div>
     );
