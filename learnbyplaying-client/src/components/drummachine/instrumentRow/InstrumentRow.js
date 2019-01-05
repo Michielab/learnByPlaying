@@ -27,6 +27,49 @@ const styles = theme =>
   });
 
 class InstrumentRow extends React.PureComponent {
+  state = {
+    selectedStep: '',
+    clientY: '',
+    volume: 100
+  };
+
+  handleMouseDown = (clientY, step) => {
+    this.setState({
+      selectedStep: step,
+      clientY: clientY
+    });
+  };
+
+  handleMouseUp = (clientY, step) => {
+    if (this.state.clientY) {
+      this.handleVolumeChange(clientY);
+    }
+  };
+
+  handleMouseOut = (clientY, step) => {
+    if (this.state.clientY) {
+      this.handleVolumeChange(clientY);
+    }
+  };
+
+  handleVolumeChange = clientY => {
+    let height = (46 / 100) * this.state.volume;
+
+    let volume;
+    this.state.clientY - clientY > 0
+      ? (volume =
+          ((this.state.clientY - clientY) / 46) * 100 + this.state.volume)
+      : (volume = ((height + (this.state.clientY - clientY)) / 46) * 100);
+
+    volume > 100 && (volume = 100);
+    volume < 0 && (volume = 0);
+    this.setState({
+      selectedStep: '',
+      clientY: '',
+      volume
+    });
+  };
+
   render() {
     const {
       row,
@@ -53,8 +96,6 @@ class InstrumentRow extends React.PureComponent {
             gridColumn: 1,
             gridRow: `row ${row} / span 1 `,
             display: 'flex',
-            // justifyContent: 'space-evenly',
-            // flexDirection: 'column',
             alignItems: 'center',
             marginRight: '10px',
             color: 'floralwhite'
@@ -98,43 +139,56 @@ class InstrumentRow extends React.PureComponent {
           </div>
         </div>
         {steps.map((step, index) => (
-          <Button
-            key={instrumentName + index}
-            onClick={() => toggleStep(index)}
-            classes={{ root: classes.button }}
-            style={{
-              backgroundColor: steps[index] === 0 ? '' : '#404572',
-              gridColumn: `${index + 2}
-                 `,
-              gridRow: `row ${row} / span 1 `
-            }}
-          >
-            {' '}
-          </Button>
-          //{
-          /* <Button
-              key={instrumentName + index}
-              // onClick={(e) => e.preventDefault()}
+          <React.Fragment key={instrumentName + index}>
+            <Button
               classes={{ root: classes.button }}
               style={{
-                backgroundColor: steps[index] === 0 ? '' : '#404572',
+                // backgroundColor: steps[index] === 0 ? '' : '#404572',
                 gridColumn: `${index + 2}
-                            `,
-                gridRow: `row ${row} / span 1 `,
-                zIndex: 9,
-                alignSelf: 'end',
-                pointerEvents: 'none'
+                 `,
+                gridRow: `row ${row} / span 1 `
               }}
+              onMouseDown={e =>
+                this.handleMouseDown(e.clientY, instrumentName + index)
+              }
+              onMouseUp={e =>
+                this.handleMouseUp(e.clientY, instrumentName + index)
+              }
+              onMouseLeave={e =>
+                this.handleMouseOut(e.clientY, instrumentName + index)
+              }
             >
-              {' '}
-            </Button> */
-          //}
+              <span
+                onClick={() => toggleStep(index)}
+                style={{
+                  width: this.state.volume < 60 ? `${80}%` : '100%',
+                  backgroundColor: index === 0 ? '#404572' : '',
+                  borderRadius: this.state.volume < 60 ? `${50}%` : '33%',
+                  position: 'absolute',
+                  bottom: 0,
+                  height:
+                    index === 0 ? `${this.state.volume}%` : `${gainValue}%`
+                }}
+              />
+            </Button>
+          </React.Fragment>
         ))}
       </React.Fragment>
     );
   }
 }
 
-InstrumentRow.propTypes = {};
+InstrumentRow.propTypes = {
+  instrumentName: PropTypes.string,
+  steps: PropTypes.array,
+  parts: PropTypes.array,
+  part: PropTypes.string,
+  row: PropTypes.number,
+  mainGain: PropTypes.number,
+  amplitude: PropTypes.object,
+  toggleStep: PropTypes.func,
+  changeAmplitude: PropTypes.func,
+  toggleMute: PropTypes.func
+};
 
 export default withStyles(styles)(InstrumentRow);

@@ -1,9 +1,13 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 
 /* Imports Redux */
 import { selectPart } from '~/ducks/actions/actions';
 import { bindActionCreators } from 'redux';
+
+/* Import Components */
+import StepsIndicator from '~/components/drummachine/stepsIndicator/StepsIndicator';
 
 function mapStateToProps(state) {
   return {
@@ -20,13 +24,9 @@ const mapDispatchToProps = dispatch => {
   return bindActionCreators({ selectPart }, dispatch);
 };
 
-class StepsIndicator extends Component {
+class StepsIndicatorSmart extends Component {
   render() {
-    const {
-      currentStep,
-      activePart,
-      selectedParts,
-    } = this.props;
+    const { currentStep, activePart, selectedParts } = this.props;
     let { steps } = this.props;
 
     let allSteps = [...steps, ...steps, ...steps, ...steps];
@@ -56,29 +56,27 @@ class StepsIndicator extends Component {
       (step, index) =>
         index >= minIndex &&
         index < maxIndex && (
-          <span
-            key={'steps' + index}
-            style={{
-              color: 'floralwhite',
-              textAlign: 'center',
-              borderRadius: '5px',
-              backgroundColor:
-                currentStep % steps.length === index ? '#2AB859' : '',
-              gridColumn: `${index + 2 - 16 * activePart}
-         
-                  
-               `,
-              gridRow: '12 / span 1 '
-            }}
-          >
-            {index + 1}
-          </span>
+          <StepsIndicator
+            steps={steps}
+            currentStep={currentStep}
+            activePart={activePart}
+            index={index}
+          />
         )
     );
   }
 }
 
+StepsIndicatorSmart.propTypes = {
+  steps: PropTypes.array,
+  parts: PropTypes.array,
+  selectedParts: PropTypes.array,
+  activePart: PropTypes.number,
+  currentStep: PropTypes.number,
+  selectPart: PropTypes.func
+};
+
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(StepsIndicator);
+)(StepsIndicatorSmart);

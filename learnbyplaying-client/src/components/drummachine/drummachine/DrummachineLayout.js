@@ -5,7 +5,6 @@ import { withStyles, createStyles } from '@material-ui/core';
 import InstrumentRowSmart from '~/components/drummachine/instrumentRow/InstrumentRowSmart';
 import ControlsSmart from '~/components/drummachine/controls/ControlsSmart';
 import StepsIndicatorSmart from '~/components/drummachine/stepsIndicator/StepsIndicatorSmart';
-import Visualizer from '~/components/drummachine/visualizer/Visualizer';
 
 const styles = theme =>
   createStyles({

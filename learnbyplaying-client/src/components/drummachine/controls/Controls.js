@@ -167,12 +167,16 @@ class Controls extends Component {
 }
 
 Controls.propTypes = {
+  playing: PropTypes.bool,
+  bpm: PropTypes.number,
+  steps: PropTypes.array,
+  parts: PropTypes.array,
+  selectedParts: PropTypes.array,
+  activePart: PropTypes.number,
+  currentStep: PropTypes.number,
   handleBPMChange: PropTypes.func,
   togglePlay: PropTypes.func,
   handleClearAll: PropTypes.func,
-  playing: PropTypes.bool,
-  bpm: PropTypes.number,
-  selectedParts: PropTypes.array
 };
 
 export default withStyles(styles)(Controls);

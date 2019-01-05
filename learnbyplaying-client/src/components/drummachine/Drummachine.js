@@ -62,8 +62,7 @@ class Drummachine extends Component {
     sampleLoader('./cr02.wav', this.audioContext, buffer => {
       this.crashBuffer = buffer;
     });
-    console.log('hi', this.audioContext.currentTime);
-    this.draw();
+  //  this.draw();
   }
 
   componentWillUnmount() {
@@ -198,7 +197,6 @@ class Drummachine extends Component {
     this.setupSound(bufferType, gainValue);
 
     this.source.start(deadline);
-    // this.gain.gain.setValueAtTime(gainValue, deadline);
   };
 
   canvasRef = canvas => {
@@ -300,8 +298,6 @@ class Drummachine extends Component {
         style={{
           gridArea: '1 / 7 / 3 / 13',
           width: '100%',
-          // backgroundColor: 'white',
-          // marginBottom: '10px',
           height: '150px'
         }}
       />

@@ -104,15 +104,22 @@ class InstrumentRowSmart extends React.PureComponent {
 }
 
 InstrumentRowSmart.propTypes = {
-  instrumentArray: PropTypes.array,
-  typeOfInstrument: PropTypes.string,
+  instrumentName: PropTypes.string,
+  steps: PropTypes.array,
+  parts: PropTypes.array,
+  part: PropTypes.string,
+  beatSteps: PropTypes.object,
+  activePart: PropTypes.number,
   row: PropTypes.number,
+  mainGain: PropTypes.number,
+  amplitude: PropTypes.object,
   toggleStep: PropTypes.func,
-  lastRow: PropTypes.bool,
-  currentStep: PropTypes.number
+  handleAmplitudeChange: PropTypes.func,
+  toggleMute: PropTypes.func,
 };
 
 export default connect(
   mapStateToProps,
   mapDispatchToProps
 )(InstrumentRowSmart);
+

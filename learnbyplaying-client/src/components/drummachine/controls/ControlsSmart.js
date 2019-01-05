@@ -39,19 +39,13 @@ class ControlsSmart extends Component {
   handleClearAll = () => {
     let { beatSteps } = this.props;
 
-    // if (Object.keys(beatSteps).length === 1) {
-    //   return null;
-    // }
-    // console.log(beatSteps)
-
     Object.keys(beatSteps).filter(el => el !== 'steps').map(part =>
       Object.keys(beatSteps[part]).map(
         instrument =>
           (beatSteps[part][instrument] = beatSteps[part][instrument].map(step => 0))
       )
     );
-    // console.log(
-    //   Object.keys(beatSteps).filter(el => el !== 'steps').map(part => Object))
+
     this.props.handleClearAllAction(beatSteps);
   };
 
@@ -103,11 +97,19 @@ class ControlsSmart extends Component {
 }
 
 ControlsSmart.propTypes = {
+  playing: PropTypes.bool,
+  bpm: PropTypes.number,
+  steps: PropTypes.array,
+  parts: PropTypes.array,
+  selectedParts: PropTypes.array,
+  part: PropTypes.string,
+  beatSteps: PropTypes.object,
+  activePart: PropTypes.number,
+  currentStep: PropTypes.number,
   handleBPMChange: PropTypes.func,
   togglePlay: PropTypes.func,
-  handleClearAll: PropTypes.func,
-  playing: PropTypes.bool,
-  bpm: PropTypes.number
+  handleClearAllAction: PropTypes.func,
+  selectPart: PropTypes.func,
 };
 
 export default connect(
