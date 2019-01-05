@@ -62,7 +62,15 @@ class Drummachine extends Component {
     sampleLoader('./cr02.wav', this.audioContext, buffer => {
       this.crashBuffer = buffer;
     });
-  //  this.draw();
+
+    sampleLoader('./cym.wav', this.audioContext, buffer => {
+      this.cymBuffer = buffer;
+    });
+
+    sampleLoader('./bd09.wav', this.audioContext, buffer => {
+      this.kickBuffer = buffer;
+    });
+    this.draw();
   }
 
   componentWillUnmount() {
@@ -127,8 +135,27 @@ class Drummachine extends Component {
       selectedParts,
       amplitude
     } = this.props;
+
+    console.log(beatSteps);
     const newCurrentStep = currentStep + 1;
-    let steps = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+    let steps = [
+      { step: 0, amplitude: 100 },
+      { step: 0, amplitude: 100 },
+      { step: 0, amplitude: 100 },
+      { step: 0, amplitude: 100 },
+      { step: 0, amplitude: 100 },
+      { step: 0, amplitude: 100 },
+      { step: 0, amplitude: 100 },
+      { step: 0, amplitude: 100 },
+      { step: 0, amplitude: 100 },
+      { step: 0, amplitude: 100 },
+      { step: 0, amplitude: 100 },
+      { step: 0, amplitude: 100 },
+      { step: 0, amplitude: 100 },
+      { step: 0, amplitude: 100 },
+      { step: 0, amplitude: 100 },
+      { step: 0, amplitude: 100 }
+    ];
 
     let beats = {};
 
@@ -157,26 +184,31 @@ class Drummachine extends Component {
 
     Object.keys(beats).map((instrument, index) => {
       if (beats[instrument][newCurrentStep % steps.length]) {
-        const buffer = instrument + 'Buffer';
+        if (beats[instrument][newCurrentStep % steps.length].step) {
+          const buffer = instrument + 'Buffer';
 
-        const amplitudeValue = amplitude.hasOwnProperty(instrument)
-          ? amplitude[instrument]
-          : amplitude.mainGain;
+          const amplitudeValue = amplitude.hasOwnProperty(instrument)
+            ? ((amplitude[instrument] / 100) *
+                beats[instrument][newCurrentStep % steps.length].amplitude) /
+              100
+            : beats[instrument][newCurrentStep % steps.length].amplitude / 100;
 
-        let gainValue = amplitude.hasOwnProperty(instrument + 'Mute')
-          ? amplitude[instrument + 'Mute']
-            ? 0
-            : amplitudeValue / 100
-          : amplitudeValue / 100;
+          let gainValue = amplitude.hasOwnProperty(instrument + 'Mute')
+            ? amplitude[instrument + 'Mute']
+              ? 0
+              : amplitudeValue
+            : amplitudeValue;
 
-        instrument === 'kick'
-          ? triggerKick(this.audioContext, deadline, gainValue, this.analyser)
-          : this.triggerSound(
-              this.audioContext,
-              deadline,
-              this[buffer],
-              gainValue
-            );
+          instrument === 'kick'
+            ? triggerKick(this.audioContext, deadline, gainValue, this.analyser)
+            : this.triggerSound(
+                this.audioContext,
+                deadline,
+                this[buffer],
+                gainValue,
+                instrument
+              );
+        }
       }
     });
 
@@ -193,9 +225,11 @@ class Drummachine extends Component {
     this.gain.connect(this.audioContext.destination);
   };
 
-  triggerSound = (context, deadline, bufferType, gainValue) => {
+  triggerSound = (context, deadline, bufferType, gainValue, instrument) => {
     this.setupSound(bufferType, gainValue);
-
+    if (instrument === 'cym') {
+      this.gain.gain.exponentialRampToValueAtTime(0.01, deadline + 0.5);
+    }
     this.source.start(deadline);
   };
 

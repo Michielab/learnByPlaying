@@ -10,7 +10,7 @@ const styles = theme =>
       backgroundColor: '#212121',
       color: 'rgba(255, 255, 255, 0.8)',
       border: 'rgba(255, 255, 255, 0.8) solid 2px',
-      borderRadius: '35%',
+      // borderRadius: '35%',
       height: '50px',
       width: '50px',
       '&:hover': {
@@ -30,7 +30,6 @@ class InstrumentRow extends React.PureComponent {
   state = {
     selectedStep: '',
     clientY: '',
-    volume: 100
   };
 
   handleMouseDown = (clientY, step) => {
@@ -42,23 +41,23 @@ class InstrumentRow extends React.PureComponent {
 
   handleMouseUp = (clientY, step) => {
     if (this.state.clientY) {
-      this.handleVolumeChange(clientY);
+      this.handleVolumeChange(clientY, step);
     }
   };
 
   handleMouseOut = (clientY, step) => {
     if (this.state.clientY) {
-      this.handleVolumeChange(clientY);
+      this.handleVolumeChange(clientY, step);
     }
   };
 
-  handleVolumeChange = clientY => {
-    let height = (46 / 100) * this.state.volume;
+  handleVolumeChange = (clientY, step) => {
+    let height = (46 / 100) * this.props.steps[step].amplitude;
 
     let volume;
     this.state.clientY - clientY > 0
       ? (volume =
-          ((this.state.clientY - clientY) / 46) * 100 + this.state.volume)
+          ((this.state.clientY - clientY) / 46) * 100 + this.props.steps[step].amplitude)
       : (volume = ((height + (this.state.clientY - clientY)) / 46) * 100);
 
     volume > 100 && (volume = 100);
@@ -67,7 +66,7 @@ class InstrumentRow extends React.PureComponent {
       selectedStep: '',
       clientY: '',
       volume
-    });
+    }, this.props.toggleStep(step, volume))
   };
 
   render() {
@@ -149,25 +148,24 @@ class InstrumentRow extends React.PureComponent {
                 gridRow: `row ${row} / span 1 `
               }}
               onMouseDown={e =>
-                this.handleMouseDown(e.clientY, instrumentName + index)
+                this.handleMouseDown(e.clientY, index + instrumentName)
               }
               onMouseUp={e =>
-                this.handleMouseUp(e.clientY, instrumentName + index)
+                this.handleMouseUp(e.clientY, index)
               }
               onMouseLeave={e =>
-                this.handleMouseOut(e.clientY, instrumentName + index)
+                this.handleMouseOut(e.clientY, index)
               }
             >
               <span
-                onClick={() => toggleStep(index)}
                 style={{
-                  width: this.state.volume < 60 ? `${80}%` : '100%',
-                  backgroundColor: index === 0 ? '#404572' : '',
-                  borderRadius: this.state.volume < 60 ? `${50}%` : '33%',
+                  width: '100%',
+                  // width: step.amplitude < 60 ? `${80}%` : '100%',
+                backgroundColor: steps[index].step === 0 ? '' : '#404572',
+                // borderRadius: step.amplitude < 60 ? `${50}%` : '33%',
                   position: 'absolute',
                   bottom: 0,
-                  height:
-                    index === 0 ? `${this.state.volume}%` : `${gainValue}%`
+                  height: `${step.amplitude}%` 
                 }}
               />
             </Button>

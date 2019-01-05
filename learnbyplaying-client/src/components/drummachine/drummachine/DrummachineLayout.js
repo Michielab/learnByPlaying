@@ -44,6 +44,7 @@ class DrumMachineLayout extends Component {
       <div className={classes.container}>
         <div className={classes.wrapper}>
           <ControlsSmart />
+          <InstrumentRowSmart instrumentName="cym" row={3} />
           <InstrumentRowSmart instrumentName="crash" row={4} />
           <InstrumentRowSmart instrumentName="highHat" row={5} />
           <InstrumentRowSmart instrumentName="mt" row={6} />

@@ -62,14 +62,107 @@ const audioContextDefaultState = {
     currentStep: 0
   },
   beatSteps: {
-    steps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    partOne: { steps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
-    partTwo: { steps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
-    partThree: { steps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
-    partFour: { steps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] }
+    steps: [
+      { step: 0, amplitude: 100 },
+      { step: 0, amplitude: 100 },
+      { step: 0, amplitude: 100 },
+      { step: 0, amplitude: 100 },
+      { step: 0, amplitude: 100 },
+      { step: 0, amplitude: 100 },
+      { step: 0, amplitude: 100 },
+      { step: 0, amplitude: 100 },
+      { step: 0, amplitude: 100 },
+      { step: 0, amplitude: 100 },
+      { step: 0, amplitude: 100 },
+      { step: 0, amplitude: 100 },
+      { step: 0, amplitude: 100 },
+      { step: 0, amplitude: 100 },
+      { step: 0, amplitude: 100 },
+      { step: 0, amplitude: 100 }
+    ],
+    partOne: {
+      steps: [
+        { step: 0, amplitude: 100 },
+        { step: 0, amplitude: 100 },
+        { step: 0, amplitude: 100 },
+        { step: 0, amplitude: 100 },
+        { step: 0, amplitude: 100 },
+        { step: 0, amplitude: 100 },
+        { step: 0, amplitude: 100 },
+        { step: 0, amplitude: 100 },
+        { step: 0, amplitude: 100 },
+        { step: 0, amplitude: 100 },
+        { step: 0, amplitude: 100 },
+        { step: 0, amplitude: 100 },
+        { step: 0, amplitude: 100 },
+        { step: 0, amplitude: 100 },
+        { step: 0, amplitude: 100 },
+        { step: 0, amplitude: 100 }
+      ]
+    },
+    partTwo: {
+      steps: [
+        { step: 0, amplitude: 100 },
+        { step: 0, amplitude: 100 },
+        { step: 0, amplitude: 100 },
+        { step: 0, amplitude: 100 },
+        { step: 0, amplitude: 100 },
+        { step: 0, amplitude: 100 },
+        { step: 0, amplitude: 100 },
+        { step: 0, amplitude: 100 },
+        { step: 0, amplitude: 100 },
+        { step: 0, amplitude: 100 },
+        { step: 0, amplitude: 100 },
+        { step: 0, amplitude: 100 },
+        { step: 0, amplitude: 100 },
+        { step: 0, amplitude: 100 },
+        { step: 0, amplitude: 100 },
+        { step: 0, amplitude: 100 }
+      ]
+    },
+    partThree: {
+      steps: [
+        { step: 0, amplitude: 100 },
+        { step: 0, amplitude: 100 },
+        { step: 0, amplitude: 100 },
+        { step: 0, amplitude: 100 },
+        { step: 0, amplitude: 100 },
+        { step: 0, amplitude: 100 },
+        { step: 0, amplitude: 100 },
+        { step: 0, amplitude: 100 },
+        { step: 0, amplitude: 100 },
+        { step: 0, amplitude: 100 },
+        { step: 0, amplitude: 100 },
+        { step: 0, amplitude: 100 },
+        { step: 0, amplitude: 100 },
+        { step: 0, amplitude: 100 },
+        { step: 0, amplitude: 100 },
+        { step: 0, amplitude: 100 }
+      ]
+    },
+    partFour: {
+      steps: [
+        { step: 0, amplitude: 100 },
+        { step: 0, amplitude: 100 },
+        { step: 0, amplitude: 100 },
+        { step: 0, amplitude: 100 },
+        { step: 0, amplitude: 100 },
+        { step: 0, amplitude: 100 },
+        { step: 0, amplitude: 100 },
+        { step: 0, amplitude: 100 },
+        { step: 0, amplitude: 100 },
+        { step: 0, amplitude: 100 },
+        { step: 0, amplitude: 100 },
+        { step: 0, amplitude: 100 },
+        { step: 0, amplitude: 100 },
+        { step: 0, amplitude: 100 },
+        { step: 0, amplitude: 100 },
+        { step: 0, amplitude: 100 }
+      ]
+    }
   },
   amplitude: {
-    mainGain: 100,
+    mainGain: 100
   },
   parts: ['partOne', 'partTwo', 'partThree', 'partFour'],
   activePart: 0,
@@ -84,19 +177,9 @@ const drummachine = (state = audioContextDefaultState, action) => {
         audioContext: action.payload.audioContext
       };
     case TOGGLE_STEP:
-      // let instrumentName = action.payload.instrument.instrumentName;
-      // let stepsArray = [...action.payload.instrument.steps];
-      // console.log(state, action.payload);
-      // state.beatSteps[action.payload.part][instrumentName] = stepsArray
       return {
         ...state,
         beatSteps: action.payload.newSteps
-        // beatSteps: {
-        //   ...state.beatSteps
-        //   // [action.payload.part] = {...state.beatSteps[action.payload.part],
-        //   //   [instrumentName]: stepsArray
-        //   // }
-        // }
       };
     case TOGGLE_PLAY:
       return {
@@ -144,7 +227,9 @@ const drummachine = (state = audioContextDefaultState, action) => {
         }
       };
     case MUTE_INSTRUMENT:
-      let mute = state.amplitude[action.payload.instrument + 'Mute'] ? false : true;
+      let mute = state.amplitude[action.payload.instrument + 'Mute']
+        ? false
+        : true;
       return {
         ...state,
         amplitude: {

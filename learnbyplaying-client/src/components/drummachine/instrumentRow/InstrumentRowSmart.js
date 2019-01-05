@@ -2,7 +2,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { toggleStep, handleAmplitudeChange, toggleMute } from '~/ducks/actions/actions';
+import {
+  toggleStep,
+  handleAmplitudeChange,
+  toggleMute
+} from '~/ducks/actions/actions';
 
 import InstrumentRow from './InstrumentRow';
 
@@ -30,11 +34,14 @@ const mapStateToProps = (state, ownProps) => {
 };
 
 const mapDispatchToProps = dispatch => {
-  return bindActionCreators({ toggleStep, handleAmplitudeChange, toggleMute }, dispatch);
+  return bindActionCreators(
+    { toggleStep, handleAmplitudeChange, toggleMute },
+    dispatch
+  );
 };
 
 class InstrumentRowSmart extends React.PureComponent {
-  toggleStep = index => {
+  toggleStep = (index, volume) => {
     const { part, beatSteps, parts, activePart, instrumentName } = this.props;
 
     let newSteps = beatSteps;
@@ -65,27 +72,38 @@ class InstrumentRowSmart extends React.PureComponent {
     }
 
     let steps = this.props.steps;
-    const stepValue = steps[index] === 1 ? 0 : 1;
-    steps[index] = stepValue;
+    const stepValue =
+      steps[index].step === 1 ? (steps[index].amplitude !== volume ? 1 : 0) : 1;
 
     newSteps[part][instrumentName] = steps;
+    newSteps[part][instrumentName][index] = {
+      step: stepValue,
+      amplitude: volume
+    };
 
     this.props.toggleStep(newSteps);
   };
 
   changeAmplitude = (instrumentName, amplitudeValue) => {
-    const {handleAmplitudeChange} = this.props;
-    handleAmplitudeChange(instrumentName,amplitudeValue)
-  }
+    const { handleAmplitudeChange } = this.props;
+    handleAmplitudeChange(instrumentName, amplitudeValue);
+  };
 
-  handleToggleMute = (instrumentName) => {
-    const {toggleMute} = this.props;
-    toggleMute(instrumentName)
-  }
-
+  handleToggleMute = instrumentName => {
+    const { toggleMute } = this.props;
+    toggleMute(instrumentName);
+  };
 
   render() {
-    const { row, instrumentName, part, steps, parts, mainGain, amplitude } = this.props;
+    const {
+      row,
+      instrumentName,
+      part,
+      steps,
+      parts,
+      mainGain,
+      amplitude
+    } = this.props;
     return (
       <InstrumentRow
         instrumentName={instrumentName}
@@ -115,11 +133,10 @@ InstrumentRowSmart.propTypes = {
   amplitude: PropTypes.object,
   toggleStep: PropTypes.func,
   handleAmplitudeChange: PropTypes.func,
-  toggleMute: PropTypes.func,
+  toggleMute: PropTypes.func
 };
 
 export default connect(
   mapStateToProps,
   mapDispatchToProps
 )(InstrumentRowSmart);
-

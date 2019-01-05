@@ -39,12 +39,18 @@ class ControlsSmart extends Component {
   handleClearAll = () => {
     let { beatSteps } = this.props;
 
-    Object.keys(beatSteps).filter(el => el !== 'steps').map(part =>
-      Object.keys(beatSteps[part]).map(
-        instrument =>
-          (beatSteps[part][instrument] = beatSteps[part][instrument].map(step => 0))
-      )
-    );
+    Object.keys(beatSteps)
+      .filter(el => el !== 'steps')
+      .map(part =>
+        Object.keys(beatSteps[part]).map(
+          instrument =>
+            (beatSteps[part][instrument] = beatSteps[part][instrument].map(
+              step => {
+                return { ...step, step: 0 };
+              }
+            ))
+        )
+      );
 
     this.props.handleClearAllAction(beatSteps);
   };
@@ -109,7 +115,7 @@ ControlsSmart.propTypes = {
   handleBPMChange: PropTypes.func,
   togglePlay: PropTypes.func,
   handleClearAllAction: PropTypes.func,
-  selectPart: PropTypes.func,
+  selectPart: PropTypes.func
 };
 
 export default connect(

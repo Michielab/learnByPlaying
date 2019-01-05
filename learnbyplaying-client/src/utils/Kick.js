@@ -26,7 +26,7 @@ export const triggerKick = (context, deadline, gainMax, analyser) => {
     The first parameter is the value you want to set and the second parameter is the time 
     on which you want te set the parameter.
     */
-  amplifier.gain.setValueAtTime(gainMax, deadline);
+  amplifier.gain.setValueAtTime(gainMax * 2, deadline);
   oscillator.frequency.exponentialRampToValueAtTime(50, deadline + 0.15);
 
   /* 
